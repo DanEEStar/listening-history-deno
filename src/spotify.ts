@@ -74,6 +74,8 @@ export async function updatePlayHistory() {
 
   if (lastPlayedApiTrack) {
     const apiTrackId = lastPlayedApiTrack.id;
+    console.log("fetched last played api track", apiTrackId);
+
     const lastPlayedDbTrack = await lastPlayedDb();
     const dbTrackId = lastPlayedDbTrack?.track_id;
 
@@ -84,7 +86,6 @@ export async function updatePlayHistory() {
       dbTrackName: lastPlayedDbTrack?.title,
     }
 
-    console.log("fetched last played db track", trackInfo);
 
     if (apiTrackId !== dbTrackId) {
       console.log("tracks different -> updating db");
