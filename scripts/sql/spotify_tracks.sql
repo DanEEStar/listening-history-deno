@@ -8,15 +8,20 @@ create table spotify_tracks(
 );
 
 
+select *
+from spotify_tracks
+order by id desc;
+
+
 -- most played songs
 select count(*), p.track_id, p.artist, p.title, max(p.played_at), min(p.played_at)
-from played_tracks p
+from spotify_tracks p
 group by 2, 3, 4
 order by 1 desc, max(p.played_at) desc;
 
 -- most played artist
 select count(*), p.artist, max(p.played_at), min(p.played_at)
-from played_tracks p
+from spotify_tracks p
 group by p.artist
 order by 1 desc;
 
@@ -24,7 +29,7 @@ order by 1 desc;
 select count(*), p.artist
 from (
     select distinct on(pi.track_id) *
-    from played_tracks pi
+    from spotify_tracks pi
 ) p
 group by p.artist
 order by 1 desc;
