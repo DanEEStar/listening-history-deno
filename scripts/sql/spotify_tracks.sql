@@ -1,10 +1,10 @@
-create table spotify_tracks(
-   id serial primary key,
-   track jsonb not null,
-   track_id text generated always as (track->>'id') stored,
-   artist text generated always as (track->'artists'->0->>'name') stored,
-   title text generated always as (track->>'name') stored,
-   played_at timestamptz NOT NULL DEFAULT NOW()
+create table if not exists spotify_tracks(
+    id serial primary key,
+    track jsonb not null,
+    track_id text generated always as (track->>'id') stored,
+    artist text generated always as (track->'artists'->0->>'name') stored,
+    title text generated always as (track->>'name') stored,
+    played_at timestamptz NOT NULL DEFAULT NOW()
 );
 
 

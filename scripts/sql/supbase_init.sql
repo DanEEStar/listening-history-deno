@@ -15,4 +15,4 @@ select
 select * from cron.job;
 
 -- see cron jobs details
-select * from cron.job_run_details;
+select * from cron.job_run_details order by end_time desc limit 10;
