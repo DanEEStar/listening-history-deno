@@ -1,4 +1,19 @@
+import * as postgres from "https://deno.land/x/postgres@v0.15.0/mod.ts";
+
 const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
+
+
+interface PocketCastsEpisode {
+  uuid: string;
+  episode: any;
+  title: string;
+  podcast: string;
+  playingStatus: number;
+  duration: number;
+  playedUpTo: number;
+  created_at: string;
+  updated_at: string;
+}
 
 
 async function fetchToken(): Promise<string> {
@@ -32,6 +47,35 @@ async function fetchHistory() {
   });
 
   return await jsonResponse.json();
+}
+
+async function processHistory() {
+
+}
+
+async function insertEpisode(episodeJson: PocketCastsEpisode, playedAt: Date = new Date()) {
+  const episodeInfo = {
+    uuid: episodeJson.uuid,
+    title: episodeJson.title,
+    podcast: episodeJson.podcast,
+    playingStatus: episodeJson.playingStatus,
+    playedPercent: episodeJson.playedUpTo / episodeJson.duration,
+  };
+
+  if (episodeJson.playingStatus === 3 || episodeJson.playedUpTo / episodeJson.duration > 0.7) {
+    const client = new postgres.Client(databaseUrl);
+    await client.connect();
+    await client.queryArray(
+        `insert into pocket_casts_episodes (uuid, episode, played_at) values ($1, $2, $3) 
+       on conflict (uuid) do nothing`,
+        [episodeJson.uuid, episodeJson, playedAt],
+    );
+    await client.end();
+    console.log("episode inserted", episodeInfo);
+  }
+  else {
+    console.log("episode not fully played -> do not insert", episodeInfo);
+  }
 }
 
 //
@@ -107,6 +151,10 @@ async function main() {
   console.log(p3);
   console.log(p2);
   console.log(p1);
+
+  for (const episode of (await fetchHistory()).episodes) {
+    await insertEpisode(episode);
+  }
 }
 
 if (import.meta.main) {
