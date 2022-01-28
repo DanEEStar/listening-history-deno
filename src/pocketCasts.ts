@@ -11,8 +11,7 @@ interface PocketCastsEpisode {
   playingStatus: number;
   duration: number;
   playedUpTo: number;
-  created_at: string;
-  updated_at: string;
+  played_at?: string
 }
 
 
@@ -49,11 +48,7 @@ async function fetchHistory() {
   return await jsonResponse.json();
 }
 
-async function processHistory() {
-
-}
-
-async function insertEpisode(episodeJson: PocketCastsEpisode, playedAt: Date = new Date()) {
+async function insertEpisode(episodeJson: PocketCastsEpisode) {
   const episodeInfo = {
     uuid: episodeJson.uuid,
     title: episodeJson.title,
@@ -63,12 +58,16 @@ async function insertEpisode(episodeJson: PocketCastsEpisode, playedAt: Date = n
   };
 
   if (episodeJson.playingStatus === 3 || episodeJson.playedUpTo / episodeJson.duration > 0.7) {
+    if (!episodeJson.played_at) {
+      episodeJson.played_at = new Date().toISOString();
+    }
+
     const client = new postgres.Client(databaseUrl);
     await client.connect();
-    await client.queryArray(
-        `insert into pocket_casts_episodes (uuid, episode, played_at) values ($1, $2, $3) 
-       on conflict (uuid) do nothing`,
-        [episodeJson.uuid, episodeJson, playedAt],
+    await client.queryArray(`
+            insert into pocket_casts_episodes (uuid, episode, played_at) values ($1, $2, $3) 
+            on conflict (uuid) do nothing`,
+        [episodeJson.uuid, episodeJson, episodeJson.played_at],
     );
     await client.end();
     console.log("episode inserted", episodeInfo);
@@ -78,83 +77,28 @@ async function insertEpisode(episodeJson: PocketCastsEpisode, playedAt: Date = n
   }
 }
 
-//
-// async function lastPlayedDb(): Promise<SpotifyTrackDb | null> {
-//   const client = new postgres.Client(databaseUrl);
-//   await client.connect();
-//   const result = (await client.queryObject(`
-//     select id, track_id, artist, title
-//     from spotify_tracks
-//     order by id desc
-//     limit 1;
-//   `));
-//   await client.end();
-//   if (result.rows.length > 0) {
-//     return result.rows[0] as SpotifyTrackDb;
-//   }
-//   return null;
-// }
-//
-// export async function updatePlayHistory() {
-//   const recentlyPlayedApi = await recentlyPlayed();
-//   const lastPlayedApiTrack = recentlyPlayedApi[0]?.track;
-//
-//   console.log("fetched last played api track", {
-//     trackId: lastPlayedApiTrack?.track,
-//   });
-//
-//   if (lastPlayedApiTrack) {
-//     const apiTrackId = lastPlayedApiTrack.id;
-//     console.log("fetched last played api track", apiTrackId);
-//
-//     const lastPlayedDbTrack = await lastPlayedDb();
-//     const dbTrackId = lastPlayedDbTrack?.track_id;
-//
-//     const trackInfo = {
-//       apiTrackId,
-//       apiTrackName: lastPlayedApiTrack.name,
-//       dbTrackId,
-//       dbTrackName: lastPlayedDbTrack?.title,
-//     }
-//
-//
-//     if (apiTrackId !== dbTrackId) {
-//       console.log("tracks different -> updating db");
-//       const client = new postgres.Client(databaseUrl);
-//       await client.connect();
-//       await client.queryArray(
-//         `insert into spotify_tracks (track) values ($1)`,
-//         [lastPlayedApiTrack],
-//       );
-//       await client.end();
-//       console.log("updated db successfully");
-//       return Object.assign({
-//         message: "updated db successfully",
-//         trackInfo,
-//       })
-//     } else {
-//       console.log("tracks same -> no update needed");
-//       return Object.assign({
-//         message: "no db update needed",
-//         trackInfo,
-//       })
-//     }
-//   } else {
-//     return {
-//       message: "no api track found",
-//     }
-//   }
-// }
-
-async function main() {
-  const [p1, p2, p3] = (await fetchHistory()).episodes;
-  console.log(p3);
-  console.log(p2);
-  console.log(p1);
-
-  for (const episode of (await fetchHistory()).episodes) {
+export async function updatePocketCastsHistory() {
+  const history = await fetchHistory();
+  for (const episode of history.episodes.slice(0, 10)) {
     await insertEpisode(episode);
   }
+
+  return {
+    message: "update complete",
+  }
+}
+
+async function insertOldData() {
+  const text = await Deno.readTextFile("./processed_history.json");
+  const json = JSON.parse(text);
+  for (const episode of json) {
+    console.log(episode.title, episode.played_at);
+    await insertEpisode(episode);
+  }
+}
+
+async function main() {
+  await updatePocketCastsHistory();
 }
 
 if (import.meta.main) {

@@ -64,7 +64,7 @@ async function lastPlayedDb(): Promise<SpotifyTrackDb | null> {
   return null;
 }
 
-export async function updatePlayHistory() {
+export async function updateSpotifyHistory() {
   const recentlyPlayedApi = await recentlyPlayed();
   const lastPlayedApiTrack = recentlyPlayedApi[0]?.track;
 
@@ -116,7 +116,7 @@ export async function updatePlayHistory() {
 }
 
 function main() {
-  updatePlayHistory();
+  updateSpotifyHistory();
 }
 
 if (import.meta.main) {

@@ -8,7 +8,5 @@ create table if not exists pocket_casts_episodes (
 );
 
 
-select *
+select count(*)
 from pocket_casts_episodes;
-
-truncate pocket_casts_episodes;
