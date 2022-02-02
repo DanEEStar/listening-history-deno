@@ -11,6 +11,16 @@ select
     $$
   );
 
+select
+  cron.schedule(
+    'update-pocket-casts-history', -- name of the cron job
+    '*/5 * * * *', -- every 5 minutes
+    $$
+    select status
+    from http_get('https://listening-history-deno.deno.dev/updatepocketcasts')
+    $$
+  );
+
 -- see cron jobs
 select * from cron.job;
 
