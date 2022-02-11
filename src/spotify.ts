@@ -1,4 +1,5 @@
 import * as postgres from "https://deno.land/x/postgres@v0.15.0/mod.ts";
+import { myFetch } from "./utils.ts";
 
 const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
 
@@ -16,16 +17,19 @@ async function refreshAccessToken(): Promise<string> {
   const spotifyClientSecret = Deno.env.get("SPOTIFY_CLIENT_SECRET")!;
   const spotifyRefreshToken = Deno.env.get("SPOTIFY_REFRESH_TOKEN")!;
 
-  const jsonResponse2 = await fetch("https://accounts.spotify.com/api/token", {
-    body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
-    headers: {
-      "Authorization": `Basic ${
-        btoa(spotifyClientId + ":" + spotifyClientSecret)
-      }`,
-      "Content-Type": "application/x-www-form-urlencoded",
+  const jsonResponse2 = await myFetch(
+    "https://accounts.spotify.com/api/token",
+    {
+      body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
+      headers: {
+        "Authorization": `Basic ${
+          btoa(spotifyClientId + ":" + spotifyClientSecret)
+        }`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
     },
-    method: "POST",
-  });
+  );
 
   return (await jsonResponse2.json()).access_token;
 }
@@ -39,7 +43,7 @@ async function createAuthHeader() {
 
 async function recentlyPlayed() {
   const authHeader = await createAuthHeader();
-  const jsonResponse = await fetch(
+  const jsonResponse = await myFetch(
     "https://api.spotify.com/v1/me/player/recently-played?limit=50",
     {
       headers: authHeader,
@@ -52,9 +56,9 @@ async function lastPlayedDb(): Promise<SpotifyTrackDb | null> {
   const client = new postgres.Client(databaseUrl);
   await client.connect();
   const result = (await client.queryObject(`
-    select id, track_id, artist, title
+    select id, track_id, artist, title, played_at
     from spotify_tracks
-    order by id desc
+    order by played_at desc
     limit 1;
   `));
   await client.end();
@@ -84,8 +88,7 @@ export async function updateSpotifyHistory() {
       apiTrackName: lastPlayedApiTrack.name,
       dbTrackId,
       dbTrackName: lastPlayedDbTrack?.title,
-    }
-
+    };
 
     if (apiTrackId !== dbTrackId) {
       console.log("tracks different -> updating db");
@@ -100,18 +103,20 @@ export async function updateSpotifyHistory() {
       return Object.assign({
         message: "updated db successfully",
         trackInfo,
-      })
+        lastPlayedDbTrack,
+      });
     } else {
       console.log("tracks same -> no update needed");
       return Object.assign({
         message: "no db update needed",
         trackInfo,
-      })
+        lastPlayedDbTrack,
+      });
     }
   } else {
     return {
       message: "no api track found",
-    }
+    };
   }
 }
 

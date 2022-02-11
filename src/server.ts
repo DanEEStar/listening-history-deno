@@ -1,6 +1,6 @@
-import {Application, Router} from "https://deno.land/x/oak/mod.ts";
-import {updateSpotifyHistory} from "./spotify.ts";
-import {updatePocketCastsHistory} from './pocketCasts.ts';
+import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { updateSpotifyHistory } from "./spotify.ts";
+import { updatePocketCastsHistory } from "./pocketCasts.ts";
 
 const router = new Router();
 
@@ -11,13 +11,12 @@ router.get("/", (ctx) => {
 });
 
 router.get("/update", async (ctx) => {
-  ctx.response.body = (await updateSpotifyHistory());
+  ctx.response.body = await updateSpotifyHistory();
 });
 
 router.get("/updatepocketcasts", async (ctx) => {
-  ctx.response.body = (await updatePocketCastsHistory());
+  ctx.response.body = await updatePocketCastsHistory();
 });
-
 
 const app = new Application();
 app.use(router.routes());
