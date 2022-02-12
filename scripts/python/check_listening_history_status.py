@@ -54,7 +54,7 @@ def check_status():
     jobs = [
         ('update-spotify-history', 60 * 15),
         ('update-pocket-casts-history', 60 * 15),
-        ('purge-old-logs', 60 * 60 * 24),
+        ('purge-old-logs', 60 * 60 * 25),
     ]
 
     for job in jobs:
@@ -66,6 +66,12 @@ def check_status():
         else:
             print(Fore.GREEN + f'{job[0]} ok, last run {end_time}')
     print(Style.RESET_ALL)
+
+    if status_json['numJobEntries'] <= 0 or status_json['numJobEntries'] > 30000:
+        print(Fore.RED + f'numJobEntries not ok {status_json["numJobEntries"]}')
+        result += 1
+    else:
+        print(Fore.GREEN + f'numJobEntries ok {status_json["numJobEntries"]}')
 
     return result
 
