@@ -1,0 +1,19 @@
+image: python:3.10
+
+variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+    paths:
+        - .cache/pip
+        - venv/
+
+before_script:
+    - python --version  # For debugging
+    - python -m venv venc
+    - source venv/bin/activate
+
+test:
+    script:
+        - pip install -r scripts/python/requirements.txt
+        - python scripts/python/check_listening_history_status.py
