@@ -10,7 +10,7 @@ cache:
 
 before_script:
     - python --version  # For debugging
-    - python -m venv venc
+    - python -m venv venv
     - source venv/bin/activate
 
 test:
