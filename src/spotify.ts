@@ -52,7 +52,7 @@ async function recentlyPlayed() {
   return (await jsonResponse.json()).items;
 }
 
-async function lastPlayedDb(): Promise<SpotifyTrackDb | null> {
+export async function lastSpotifyTrackDb(): Promise<any> {
   const client = new postgres.Client(databaseUrl);
   await client.connect();
   const result = (await client.queryObject(`
@@ -63,7 +63,7 @@ async function lastPlayedDb(): Promise<SpotifyTrackDb | null> {
   `));
   await client.end();
   if (result.rows.length > 0) {
-    return result.rows[0] as SpotifyTrackDb;
+    return result.rows[0];
   }
   return null;
 }
@@ -80,7 +80,7 @@ export async function updateSpotifyHistory() {
     const apiTrackId = lastPlayedApiTrack.id;
     console.log("fetched last played api track", apiTrackId);
 
-    const lastPlayedDbTrack = await lastPlayedDb();
+    const lastPlayedDbTrack = await lastSpotifyTrackDb();
     const dbTrackId = lastPlayedDbTrack?.track_id;
 
     const trackInfo = {

@@ -66,6 +66,5 @@ join cron.job j on jr.jobid = j.jobid
 where status = 'succeeded'
 group by jr.jobid;
 
-
 -- delete cron job
 -- select cron.unschedule('webhook-test');

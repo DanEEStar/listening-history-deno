@@ -11,7 +11,7 @@ interface PocketCastsEpisode {
   playingStatus: number;
   duration: number;
   playedUpTo: number;
-  played_at?: string;
+  played_at: string;
 }
 
 async function fetchToken(): Promise<string> {
@@ -95,6 +95,24 @@ export async function updatePocketCastsHistory() {
     message: "update complete",
     newestEpisode: newestEpisode,
   };
+}
+
+export async function lastPocketCastsEpisodeDb(): Promise<
+  PocketCastsEpisode | null
+> {
+  const client = new postgres.Client(databaseUrl);
+  await client.connect();
+  const result = (await client.queryObject(`
+    select uuid, title, podcast, published, played_at
+    from pocket_casts_episodes
+    order by played_at desc
+    limit 1;
+  `));
+  await client.end();
+  if (result.rows.length > 0) {
+    return result.rows[0] as PocketCastsEpisode;
+  }
+  return null;
 }
 
 async function insertOldData() {

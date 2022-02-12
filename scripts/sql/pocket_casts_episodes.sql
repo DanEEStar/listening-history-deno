@@ -10,3 +10,8 @@ create table if not exists pocket_casts_episodes (
 
 select count(*)
 from pocket_casts_episodes;
+
+select uuid, title, podcast, published, played_at
+from pocket_casts_episodes
+order by played_at desc
+limit 1;
