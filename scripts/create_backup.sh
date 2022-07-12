@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 source /Users/daniel/Dropbox/workspace/listening-history-deno/secrets/daniel.env
 
 pg_dump $SUPBASE_DATABASE_URL -Fc --no-acl --no-owner > /Users/daniel/Dropbox/backup/listening-history/supabase.dump

@@ -1,5 +1,5 @@
 import * as postgres from "https://deno.land/x/postgres@v0.15.0/mod.ts";
-import { myFetch } from "./utils.ts";
+import {myFetch} from "./utils.ts";
 
 const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
 
@@ -51,7 +51,7 @@ async function fetchHistory() {
   return await jsonResponse.json();
 }
 
-async function insertEpisode(episodeJson: PocketCastsEpisode) {
+async function insertEpisode(episodeJson: PocketCastsEpisode, ignorePlayingStatus = false) {
   const episodeInfo = {
     uuid: episodeJson.uuid,
     title: episodeJson.title,
@@ -62,7 +62,8 @@ async function insertEpisode(episodeJson: PocketCastsEpisode) {
 
   if (
     episodeJson.playingStatus === 3 ||
-    episodeJson.playedUpTo / episodeJson.duration > 0.7
+    episodeJson.playedUpTo / episodeJson.duration > 0.7 ||
+    ignorePlayingStatus
   ) {
     if (!episodeJson.played_at) {
       episodeJson.played_at = new Date().toISOString();
@@ -83,10 +84,10 @@ async function insertEpisode(episodeJson: PocketCastsEpisode) {
   }
 }
 
-export async function updatePocketCastsHistory() {
+export async function updatePocketCastsHistory(size= 10, ignorePlayingStatus= false) {
   const history = await fetchHistory();
-  for (const episode of history.episodes.slice(0, 10)) {
-    await insertEpisode(episode);
+  for (const episode of history.episodes.slice(0, size)) {
+    await insertEpisode(episode, ignorePlayingStatus);
   }
 
   const newestEpisode = history.episodes[0];

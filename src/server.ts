@@ -8,6 +8,8 @@ const router = new Router();
 router.get("/", (ctx) => {
   ctx.response.body = {
     hello: "world",
+    size: parseInt(ctx.request.url.searchParams.get("size") || "10"),
+    ignorePlayingStatus: ctx.request.url.searchParams.get('ignorePlayingStatus') === 'true',
   };
 });
 
@@ -16,7 +18,9 @@ router.get("/update", async (ctx) => {
 });
 
 router.get("/updatepocketcasts", async (ctx) => {
-  ctx.response.body = await updatePocketCastsHistory();
+  const size = parseInt(ctx.request.url.searchParams.get("size") || "10");
+  const ignorePlayingStatus = ctx.request.url.searchParams.get('ignorePlayingStatus') === 'true';
+  ctx.response.body = await updatePocketCastsHistory(size, ignorePlayingStatus);
 });
 
 router.get("/status", async (ctx) => {
