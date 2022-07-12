@@ -72,6 +72,23 @@ def check_status():
         result += 1
     else:
         print(Fore.GREEN + f'numJobEntries ok {status_json["numJobEntries"]}')
+    print(Style.RESET_ALL)
+
+    now = datetime.now(timezone.utc)
+    spotify_played_at = isoparse(status_json['lastSpotifyTrack']['played_at'])
+    print(f'{spotify_played_at=} -> {(now - spotify_played_at).days} days ago')
+    pocketcasts_played_at = isoparse(status_json['lastPocketCastsEpisode']['played_at'])
+    print(f'{pocketcasts_played_at=} -> {(now - pocketcasts_played_at).days} days ago')
+
+    if (now - spotify_played_at).days > 7:
+        print(Fore.RED + f'last Spotify track played more than 7 days ago')
+        result += 1
+
+    if (now - pocketcasts_played_at).days > 7:
+        print(Fore.RED + f'last PocketCasts episode played more than 7 days ago')
+        result += 1
+
+    print(Style.RESET_ALL)
 
     return result
 

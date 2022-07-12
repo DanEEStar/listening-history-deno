@@ -12,6 +12,9 @@ select *
 from spotify_tracks
 order by id desc;
 
+select count(id)
+from spotify_tracks;
+
 
 -- most played songs
 select count(*), p.track_id, p.artist, p.title, max(p.played_at), min(p.played_at)
