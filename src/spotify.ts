@@ -1,5 +1,5 @@
 import * as postgres from "https://deno.land/x/postgres@v0.15.0/mod.ts";
-import { myFetch } from "./utils.ts";
+import {myFetch} from "./utils.ts";
 
 const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
 
@@ -120,8 +120,29 @@ export async function updateSpotifyHistory() {
   }
 }
 
+export async function searchSpotify(query: string) {
+  if (query.length < 3) {
+    return [];
+  }
+
+  const client = new postgres.Client(databaseUrl);
+  await client.connect();
+  return await client.queryArray(
+    `
+    select id, track_id, artist, title, played_at
+    from spotify_tracks
+    where artist ilike $1 or title ilike $1
+    order by played_at desc
+    limit 10;
+    `,
+    [`%${query}%`],
+  );
+}
+
 function main() {
-  updateSpotifyHistory();
+  searchSpotify('ein mann namens ove').then((result) => {
+    console.log(result.rows);
+  });
 }
 
 if (import.meta.main) {
