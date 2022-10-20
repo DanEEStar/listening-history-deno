@@ -19,7 +19,7 @@ deno run --allow-env --allow-net src/spotify.ts
 
 ```
 # start server
-deno run --allow-env --allow-net --watch src/server.ts
+deno run --allow-env --allow-net --watch src/server.tsx
 
 # update listening history
 curl http://localhost:8000/update
