@@ -1,4 +1,4 @@
-import * as postgres from "https://deno.land/x/postgres@v0.15.0/mod.ts";
+import * as postgres from "https://deno.land/x/postgres@v0.17.0/mod.ts";
 import {myFetch} from "./utils.ts";
 
 const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;

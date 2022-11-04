@@ -1,4 +1,4 @@
-import * as postgres from "https://deno.land/x/postgres@v0.15.0/mod.ts";
+import * as postgres from "https://deno.land/x/postgres@v0.17.0/mod.ts";
 import {lastSpotifyTrackDb} from "./spotify.ts";
 import {lastPocketCastsEpisodeDb} from "./pocketCasts.ts";
 
