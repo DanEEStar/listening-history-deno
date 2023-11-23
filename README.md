@@ -3,6 +3,8 @@
 This project uses `deno` to make a copy of the Spotify listening history to a
 Postgres DB
 
+Try deployment on Vercel with Nuxt.js
+
 ## Setup
 
 - Create a Postgres DB (tested with Supabase)
