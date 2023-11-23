@@ -1,19 +1,19 @@
 import * as postgres from "https://deno.land/x/postgres@v0.17.0/mod.ts";
-import {lastSpotifyTrackDb} from "./spotify.ts";
-import {lastPocketCastsEpisodeDb} from "./pocketCasts.ts";
+import { lastSpotifyTrackDb } from "../server/spotify.ts";
+import { lastPocketCastsEpisodeDb } from "../server/pocketCasts.ts";
 
 const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
 
 async function getJobStatus() {
   const client = new postgres.Client(databaseUrl);
   await client.connect();
-  const result = (await client.queryObject(`
+  const result = await client.queryObject(`
     select max(j.jobname) as jobname, max(jr.end_time) as end_time
     from cron.job_run_details jr
     join cron.job j on jr.jobid = j.jobid
     where status = 'succeeded'
     group by jr.jobid;
-  `));
+  `);
   await client.end();
 
   if (result.rows instanceof Array) {
@@ -29,9 +29,9 @@ async function getJobStatus() {
 async function getNumJobEntries() {
   const client = new postgres.Client(databaseUrl);
   await client.connect();
-  const result = (await client.queryObject(`
+  const result = await client.queryObject(`
     select count(*) from cron.job_run_details;
-  `));
+  `);
   await client.end();
 
   if (result.rows instanceof Array) {

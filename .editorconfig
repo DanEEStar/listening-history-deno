@@ -23,7 +23,7 @@ indent_size = 4
 indent_style = tab
 
 # Indentation override for all JS under lib directory
-[*.{js, ts, jsx, tsx}]
+[*.{js, ts, jsx, tsx, vue}]
 indent_style = space
 indent_size = 2
 
