@@ -3,7 +3,7 @@ set -euo pipefail
 
 source /Users/daniel/Dropbox/workspace/listening-history-deno/secrets/daniel.env
 
-pg_dump $SUPBASE_DATABASE_URL -Fc --no-acl --no-owner > /Users/daniel/Dropbox/backup/listening-history/supabase.dump
+pg_dump $SUPABASE_DATABASE_URL -Fc --no-acl --no-owner > /Users/daniel/Dropbox/backup/listening-history/supabase.dump
 
 # archive the current postgres dump with date
 cp /Users/daniel/Dropbox/backup/listening-history/supabase.dump "/Users/daniel/Dropbox/backup/listening-history/archive/supabase_$(date +%Y-%m-%d).dump"

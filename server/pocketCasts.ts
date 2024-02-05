@@ -2,7 +2,7 @@ import postgres from "postgres";
 import { myFetch } from "./services.ts";
 import { env } from "node:process";
 
-const databaseUrl = env.SUPBASE_DATABASE_URL!;
+const databaseUrl = env.SUPABASE_DATABASE_URL!;
 
 interface PocketCastsEpisode {
   uuid: string;

@@ -2,7 +2,7 @@ import * as postgres from "https://deno.land/x/postgres@v0.17.0/mod.ts";
 import { lastSpotifyTrackDb } from "../server/spotify.ts";
 import { lastPocketCastsEpisodeDb } from "../server/pocketCasts.ts";
 
-const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
+const databaseUrl = Deno.env.get("SUPABASE_DATABASE_URL")!;
 
 async function getJobStatus() {
   const client = new postgres.Client(databaseUrl);
