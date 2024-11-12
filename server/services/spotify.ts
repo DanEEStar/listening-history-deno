@@ -25,11 +25,11 @@ async function refreshAccessToken(): Promise<string> {
       body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
       headers: {
         "Authorization": `Basic ${btoa(
-          spotifyClientId + ":" + spotifyClientSecret
+          spotifyClientId + ":" + spotifyClientSecret,
         )}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-    }
+    },
   );
 
   return jsonResponse.access_token;
@@ -48,7 +48,7 @@ async function recentlyPlayed() {
     "https://api.spotify.com/v1/me/player/recently-played?limit=50",
     {
       headers: authHeader,
-    }
+    },
   );
   return jsonResponse.items;
 }
@@ -72,9 +72,7 @@ export async function updateSpotifyHistory() {
   const recentlyPlayedApi = await recentlyPlayed();
   const lastPlayedApiTrack = recentlyPlayedApi[0]?.track;
 
-  console.log("fetched last played api track", {
-    trackId: lastPlayedApiTrack?.track,
-  });
+  console.log("fetched last played api track", lastPlayedApiTrack);
 
   if (lastPlayedApiTrack) {
     const apiTrackId = lastPlayedApiTrack.id;
@@ -89,14 +87,13 @@ export async function updateSpotifyHistory() {
       dbTrackId,
       dbTrackName: lastPlayedDbTrack?.title,
     };
+    console.log("track info", trackInfo);
 
-    if (apiTrackId !== dbTrackId) {
+    if (dbTrackId && apiTrackId !== dbTrackId) {
       console.log("tracks different -> updating db");
       const sql = postgres(databaseUrl);
 
-      await sql`insert into spotify_tracks (track) values (${JSON.stringify(
-        lastPlayedApiTrack
-      )})`;
+      await sql`insert into spotify_tracks (track) values (${lastPlayedApiTrack})`;
       console.log("updated db successfully");
       return {
         message: "updated db successfully",
@@ -148,9 +145,11 @@ async function main() {
   // const accessToken = await refreshAccessToken();
   // console.log(accessToken);
   // const recentlyPlayedTracks = await recentlyPlayed();
-  // console.log(recentlyPlayedTracks);
-  const lastPlayedTrackDb = await lastSpotifyTrackDb();
-  console.log(lastPlayedTrackDb);
+  // console.log(recentlyPlayedTracks[0].track);
+  // const lastPlayedTrackDb = await lastSpotifyTrackDb();
+  // console.log(lastPlayedTrackDb);
+  const updateResult = await updateSpotifyHistory();
+  console.log(updateResult);
   process.exit(0);
 }
 

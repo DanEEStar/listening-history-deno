@@ -62,9 +62,7 @@ async function insertEpisode(
     const sql = postgres(databaseUrl);
     const result = await sql`
         insert into pocket_casts_episodes (uuid, episode, played_at) 
-        values (${episodeJson.uuid}, ${JSON.stringify(episodeJson)}, ${
-            episodeJson.played_at
-    }) 
+        values (${episodeJson.uuid}, ${episodeJson}, ${episodeJson.played_at}) 
         on conflict (uuid) do nothing
     `;
     console.log("episode inserted", episodeJson.title);
@@ -118,11 +116,11 @@ async function insertOldData() {
  */
 
 async function main() {
-  // await updatePocketCastsHistory();
-  const lastEpisode = await lastPocketCastsEpisodeDb();
-  // console.log(lastEpisode);
+  await updatePocketCastsHistory();
+  // const lastEpisode = await lastPocketCastsEpisodeDb();
+  // // console.log(lastEpisode);
   const history = await fetchHistory();
-  console.log(history);
+  console.log(history.episodes[1]);
 
 }
 

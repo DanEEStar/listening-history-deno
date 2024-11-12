@@ -26,9 +26,11 @@ select
     '* * * * *',
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.deno.dev/update')
+    from http_get_or_fail('https://listening-history-deno.deno.dev/api/spotify/update')
     $$
   );
+
+SELECT cron.unschedule('update-pocket-casts-history' );
 
 select
   cron.schedule(
@@ -36,7 +38,7 @@ select
     '*/5 * * * *', -- every 5 minutes
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.deno.dev/updatepocketcasts')
+    from http_get_or_fail('https://listening-history-deno.deno.dev/api/pocketcasts/update')
     $$
   );
 
