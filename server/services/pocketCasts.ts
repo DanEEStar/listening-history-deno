@@ -1,6 +1,6 @@
 import postgres from "postgres";
-import { myFetch } from "./services.ts";
 import { env } from "node:process";
+import { ofetch } from "ofetch";
 
 const databaseUrl = env.SUPABASE_DATABASE_URL!;
 
@@ -19,15 +19,12 @@ async function fetchToken(): Promise<string> {
   const pocketcastsUser = env.POCKET_CASTS_USER;
   const pocketcastsPw = env.POCKET_CASTS_PW;
 
-  const jsonResponse = await myFetch("https://api.pocketcasts.com/user/login", {
-    headers: {
-      "content-type": "application/json",
-    },
-    body: `{"email":"${pocketcastsUser}","password":"${pocketcastsPw}","scope":"webplayer"}`,
+  const jsonResponse = await ofetch("https://api.pocketcasts.com/user/login", {
     method: "POST",
+    body: `{"email":"${pocketcastsUser}","password":"${pocketcastsPw}","scope":"webplayer"}`,
   });
 
-  return (await jsonResponse.json()).token;
+  return jsonResponse.token;
 }
 
 async function createAuthHeader() {
@@ -40,20 +37,18 @@ async function createAuthHeader() {
 async function fetchHistory() {
   const authHeader = await createAuthHeader();
 
-  const jsonResponse = await myFetch(
+  return await ofetch(
     "https://api.pocketcasts.com/user/history",
     {
       headers: authHeader,
       method: "POST",
-    }
+    },
   );
-
-  return await jsonResponse.json();
 }
 
 async function insertEpisode(
   episodeJson: PocketCastsEpisode,
-  ignorePlayingStatus = false
+  ignorePlayingStatus = false,
 ) {
   if (
     episodeJson.playingStatus === 3 ||
@@ -68,8 +63,8 @@ async function insertEpisode(
     const result = await sql`
         insert into pocket_casts_episodes (uuid, episode, played_at) 
         values (${episodeJson.uuid}, ${JSON.stringify(episodeJson)}, ${
-          episodeJson.played_at
-        }) 
+            episodeJson.played_at
+    }) 
         on conflict (uuid) do nothing
     `;
     console.log("episode inserted", episodeJson.title);
@@ -80,7 +75,7 @@ async function insertEpisode(
 
 export async function updatePocketCastsHistory(
   size = 10,
-  ignorePlayingStatus = false
+  ignorePlayingStatus = false,
 ) {
   const history = await fetchHistory();
   for (const episode of history.episodes.slice(0, size)) {
@@ -125,7 +120,10 @@ async function insertOldData() {
 async function main() {
   // await updatePocketCastsHistory();
   const lastEpisode = await lastPocketCastsEpisodeDb();
-  console.log(lastEpisode);
+  // console.log(lastEpisode);
+  const history = await fetchHistory();
+  console.log(history);
+
 }
 
 // @ts-ignore

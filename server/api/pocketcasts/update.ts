@@ -1,4 +1,4 @@
-import { updatePocketCastsHistory } from "~/server/pocketCasts.ts";
+import { updatePocketCastsHistory } from "~/server/services/pocketCasts.ts";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);

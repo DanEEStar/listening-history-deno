@@ -8,7 +8,7 @@ import { router } from "https://crux.land/router@0.0.12";
 import { h, ssr } from "https://crux.land/nanossr@0.0.5";
 import { createStatusResult } from "./status.ts";
 import { updatePocketCastsHistory } from "./pocketCasts.ts";
-import { searchSpotify, updateSpotifyHistory } from "../server/spotify.ts";
+import { searchSpotify, updateSpotifyHistory } from "../server/services/spotify.ts";
 
 const createJsonResponse = (data: any) => {
   return new Response(JSON.stringify(data), {

@@ -1,6 +1,6 @@
 import postgres from "postgres";
-import { myFetch } from "./services.ts";
 import { env } from "node:process";
+import { ofetch } from "ofetch";
 
 const databaseUrl = env.SUPABASE_DATABASE_URL!;
 
@@ -18,9 +18,10 @@ async function refreshAccessToken(): Promise<string> {
   const spotifyClientSecret = env.SPOTIFY_CLIENT_SECRET!;
   const spotifyRefreshToken = env.SPOTIFY_REFRESH_TOKEN!;
 
-  const jsonResponse2 = await myFetch(
+  const jsonResponse = await ofetch(
     "https://accounts.spotify.com/api/token",
     {
+      method: "POST",
       body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
       headers: {
         "Authorization": `Basic ${btoa(
@@ -28,11 +29,10 @@ async function refreshAccessToken(): Promise<string> {
         )}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      method: "POST",
     }
   );
 
-  return (await jsonResponse2.json()).access_token;
+  return jsonResponse.access_token;
 }
 
 async function createAuthHeader() {
@@ -44,13 +44,13 @@ async function createAuthHeader() {
 
 async function recentlyPlayed() {
   const authHeader = await createAuthHeader();
-  const jsonResponse = await myFetch(
+  const jsonResponse = await ofetch(
     "https://api.spotify.com/v1/me/player/recently-played?limit=50",
     {
       headers: authHeader,
     }
   );
-  return (await jsonResponse.json()).items;
+  return jsonResponse.items;
 }
 
 export async function lastSpotifyTrackDb(): Promise<any> {
@@ -143,8 +143,14 @@ async function main() {
   // searchSpotify("ein mann namens ove").then((result) => {
   //   console.log(result.rows);
   // });
-  const lastSpotifyTrack = await lastSpotifyTrackDb();
-  console.log(lastSpotifyTrack);
+  // const lastSpotifyTrack = await lastSpotifyTrackDb();
+  // console.log(lastSpotifyTrack);
+  // const accessToken = await refreshAccessToken();
+  // console.log(accessToken);
+  // const recentlyPlayedTracks = await recentlyPlayed();
+  // console.log(recentlyPlayedTracks);
+  const lastPlayedTrackDb = await lastSpotifyTrackDb();
+  console.log(lastPlayedTrackDb);
   process.exit(0);
 }
 
