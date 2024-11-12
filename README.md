@@ -1,9 +1,7 @@
 # Listening History Deno
 
-This project uses `deno` to make a copy of the Spotify listening history to a
+This project uses `nuxt` to make a copy of the Spotify listening history to a
 Postgres DB
-
-Try deployment on Vercel with Nuxt.js
 
 ## Setup
 
@@ -14,15 +12,14 @@ Try deployment on Vercel with Nuxt.js
 ## Single run
 
 ```
-deno run --allow-env --allow-net src/spotify.ts
+npm run dev
 ```
 
-## Start server
+## Deployment
+
+We use deno for deploment.
 
 ```
-# start server
-deno run --allow-env --allow-net --watch src/server.tsx
-
-# update listening history
-curl http://localhost:8000/update
+npm run build --preset=deno_deploy
+(cd .output && deployctl deploy --project=listening-history-deno server/index.mjs)
 ```
