@@ -1,7 +1,8 @@
-import * as postgres from "https://deno.land/x/postgres@v0.17.0/mod.ts";
-import {myFetch} from "./utils.ts";
+import postgres from "postgres";
+import { env } from "node:process";
+import { ofetch } from "ofetch";
 
-const databaseUrl = Deno.env.get("SUPBASE_DATABASE_URL")!;
+const databaseUrl = env.SUPABASE_DATABASE_URL!;
 
 interface SpotifyTrackDb {
   id: number;
@@ -13,25 +14,25 @@ interface SpotifyTrackDb {
 }
 
 async function refreshAccessToken(): Promise<string> {
-  const spotifyClientId = Deno.env.get("SPOTIFY_CLIENT_ID")!;
-  const spotifyClientSecret = Deno.env.get("SPOTIFY_CLIENT_SECRET")!;
-  const spotifyRefreshToken = Deno.env.get("SPOTIFY_REFRESH_TOKEN")!;
+  const spotifyClientId = env.SPOTIFY_CLIENT_ID!;
+  const spotifyClientSecret = env.SPOTIFY_CLIENT_SECRET!;
+  const spotifyRefreshToken = env.SPOTIFY_REFRESH_TOKEN!;
 
-  const jsonResponse2 = await myFetch(
+  const jsonResponse = await ofetch(
     "https://accounts.spotify.com/api/token",
     {
+      method: "POST",
       body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
       headers: {
-        "Authorization": `Basic ${
-          btoa(spotifyClientId + ":" + spotifyClientSecret)
-        }`,
+        "Authorization": `Basic ${btoa(
+          spotifyClientId + ":" + spotifyClientSecret,
+        )}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      method: "POST",
     },
   );
 
-  return (await jsonResponse2.json()).access_token;
+  return jsonResponse.access_token;
 }
 
 async function createAuthHeader() {
@@ -43,27 +44,26 @@ async function createAuthHeader() {
 
 async function recentlyPlayed() {
   const authHeader = await createAuthHeader();
-  const jsonResponse = await myFetch(
+  const jsonResponse = await ofetch(
     "https://api.spotify.com/v1/me/player/recently-played?limit=50",
     {
       headers: authHeader,
     },
   );
-  return (await jsonResponse.json()).items;
+  return jsonResponse.items;
 }
 
 export async function lastSpotifyTrackDb(): Promise<any> {
-  const client = new postgres.Client(databaseUrl);
-  await client.connect();
-  const result = (await client.queryObject(`
+  const sql = postgres(databaseUrl);
+  const result = await sql`
     select id, track_id, artist, title, played_at
     from spotify_tracks
     order by played_at desc
     limit 1;
-  `));
-  await client.end();
-  if (result.rows.length > 0) {
-    return result.rows[0];
+  `;
+
+  if (result.length > 0) {
+    return result[0];
   }
   return null;
 }
@@ -72,9 +72,7 @@ export async function updateSpotifyHistory() {
   const recentlyPlayedApi = await recentlyPlayed();
   const lastPlayedApiTrack = recentlyPlayedApi[0]?.track;
 
-  console.log("fetched last played api track", {
-    trackId: lastPlayedApiTrack?.track,
-  });
+  console.log("fetched last played api track", lastPlayedApiTrack);
 
   if (lastPlayedApiTrack) {
     const apiTrackId = lastPlayedApiTrack.id;
@@ -89,29 +87,26 @@ export async function updateSpotifyHistory() {
       dbTrackId,
       dbTrackName: lastPlayedDbTrack?.title,
     };
+    console.log("track info", trackInfo);
 
-    if (apiTrackId !== dbTrackId) {
+    if (dbTrackId && apiTrackId !== dbTrackId) {
       console.log("tracks different -> updating db");
-      const client = new postgres.Client(databaseUrl);
-      await client.connect();
-      await client.queryArray(
-        `insert into spotify_tracks (track) values ($1)`,
-        [lastPlayedApiTrack],
-      );
-      await client.end();
+      const sql = postgres(databaseUrl);
+
+      await sql`insert into spotify_tracks (track) values (${lastPlayedApiTrack})`;
       console.log("updated db successfully");
-      return Object.assign({
+      return {
         message: "updated db successfully",
         trackInfo,
         lastPlayedDbTrack,
-      });
+      };
     } else {
       console.log("tracks same -> no update needed");
-      return Object.assign({
+      return {
         message: "no db update needed",
         trackInfo,
         lastPlayedDbTrack,
-      });
+      };
     }
   } else {
     return {
@@ -120,6 +115,7 @@ export async function updateSpotifyHistory() {
   }
 }
 
+/*
 export async function searchSpotify(query: string) {
   if (query.length < 3) {
     return [];
@@ -135,16 +131,29 @@ export async function searchSpotify(query: string) {
     order by played_at desc
     limit 10;
     `,
-    [`%${query}%`],
+    [`%${query}%`]
   );
 }
+ */
 
-function main() {
-  searchSpotify('ein mann namens ove').then((result) => {
-    console.log(result.rows);
-  });
+async function main() {
+  // searchSpotify("ein mann namens ove").then((result) => {
+  //   console.log(result.rows);
+  // });
+  // const lastSpotifyTrack = await lastSpotifyTrackDb();
+  // console.log(lastSpotifyTrack);
+  // const accessToken = await refreshAccessToken();
+  // console.log(accessToken);
+  // const recentlyPlayedTracks = await recentlyPlayed();
+  // console.log(recentlyPlayedTracks[0].track);
+  // const lastPlayedTrackDb = await lastSpotifyTrackDb();
+  // console.log(lastPlayedTrackDb);
+  const updateResult = await updateSpotifyHistory();
+  console.log(updateResult);
+  process.exit(0);
 }
 
+// @ts-ignore
 if (import.meta.main) {
   main();
 }
