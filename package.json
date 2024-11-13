@@ -10,8 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "postgres": "^3.4.5",
+    "@nuxt/ui": "^2.19.2",
+    "@nuxt/ui-pro": "^1.5.0",
     "nuxt": "^3.14.159",
+    "postgres": "^3.4.5",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
   },
