@@ -12,7 +12,7 @@ main_url = 'https://listening-history-deno.deno.dev'
 def main():
     result = 0
 
-    response = requests.get(f'{main_url}/update')
+    response = requests.get(f'{main_url}/api/spotify/update')
     if response.status_code != 200:
         print(Fore.RED + f'update Spotify history failed')
         result += 1
@@ -23,7 +23,7 @@ def main():
         print(Fore.GREEN + f'update Spotify history ok')
     print(Style.RESET_ALL)
 
-    response = requests.get(f'{main_url}/updatepocketcasts')
+    response = requests.get(f'{main_url}/api/pocketcasts/update')
     if response.status_code != 200:
         print(Fore.RED + f'update PocketCasts history failed')
         result += 1
@@ -45,7 +45,7 @@ def main():
 def check_status():
     result = 0
 
-    response = requests.get(f'{main_url}/status')
+    response = requests.get(f'{main_url}/api/status')
     status_json = json.loads(response.text)
     print(json.dumps(status_json, indent=2))
 
