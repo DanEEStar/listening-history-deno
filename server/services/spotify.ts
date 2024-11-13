@@ -68,6 +68,27 @@ export async function lastSpotifyTrackDb(): Promise<any> {
   return null;
 }
 
+export async function playTrack(albumUri: string, trackOffset: number) {
+  const authHeader = await createAuthHeader();
+  console.log(albumUri, trackOffset);
+  return await ofetch(
+    `https://api.spotify.com/v1/me/player/play?device_id=${env.SPOTIFY_DEVICE_ID!}`,
+    {
+      method: "PUT",
+      headers: {
+        ...authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        context_uri: albumUri,
+        offset: {
+          position: trackOffset,
+        },
+      }),
+    },
+  );
+}
+
 export async function updateSpotifyHistory() {
   const recentlyPlayedApi = await recentlyPlayed();
   const lastPlayedApiTrack = recentlyPlayedApi[0]?.track;

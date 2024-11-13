@@ -28,5 +28,5 @@ curl -X PUT "https://api.spotify.com/v1/me/player/play?device_id=$SPOTIFY_DEVICE
 
 curl -X PUT "https://api.spotify.com/v1/me/player/play?device_id=$SPOTIFY_DEVICE_ID" --data '{"context_uri": "spotify:album:0Cat4w4xf3pbZyRY3qOwWG", "offset": {"position": 3}}' -H "Authorization: Bearer $SPOTIFY_ACCESS_TOKEN"
 
-curl -X PUT "https://api.spotify.com/v1/me/player/play?device_id=$SPOTIFY_DEVICE_ID" --data '{"context_uri": "spotify:album:7deydpksr5O8KIe7nrYJj0", "offset": {"position": 75}}' -H "Authorization: Bearer $SPOTIFY_ACCESS_TOKEN"
+curl -X PUT "https://api.spotify.com/v1/me/player/play?device_id=$SPOTIFY_DEVICE_ID" --data '{"context_uri": "spotify:album:31a23VDmcDdBiZIxB6x3Pg", "offset": {"position": 1}}' -H "Authorization: Bearer $SPOTIFY_ACCESS_TOKEN"
 

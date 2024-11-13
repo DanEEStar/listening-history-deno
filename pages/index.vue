@@ -6,10 +6,17 @@ const data = ref([]);
 async function loadData() {
   const response = await client
     .from("spotify_tracks")
-    .select("artist, title, played_at")
+    .select("id, artist, title, played_at, track->track_number, album_uri:track->album->uri")
     .ilike("title", "%Zwerge%")
     .order("played_at", { ascending: false });
   data.value = response.data;
+}
+
+async function playTrack(track) {
+  const res = await $fetch("/api/spotify/play", {
+    method: "POST",
+    body: track,
+  });
 }
 
 </script>
@@ -23,6 +30,13 @@ async function loadData() {
       </template>
       <div>
         <UButton @click="loadData()">Load</UButton>
+      </div>
+      <div>
+        <div v-for="track in data" :key="track.id" class="p-2">
+          <div>{{ track.title }}</div>
+          <div>{{ track.artist }}</div>
+          <UButton @click="playTrack(track)">Play</UButton>
+        </div>
       </div>
       <div>
         <pre>{{ data }}</pre>
