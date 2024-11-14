@@ -22,6 +22,8 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@vueuse/core": "^11.2.0",
+    "@vueuse/nuxt": "^11.2.0",
     "prettier": "^3.3.3"
   }
 }

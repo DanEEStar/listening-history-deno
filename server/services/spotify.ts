@@ -16,6 +16,16 @@ export interface SpotifyTrackDb {
 
 export type SpotifyTrackApiPlayInfo = Pick<SpotifyTrackDb, "album_uri" | "track_number">;
 
+export interface SpotifyDevice {
+  id: string;
+  is_active: boolean;
+  is_private_session: boolean;
+  is_restricted: boolean;
+  name: string;
+  type: string;
+  volume_percent: number;
+}
+
 async function refreshAccessToken(): Promise<string> {
   const spotifyClientId = env.SPOTIFY_CLIENT_ID!;
   const spotifyClientSecret = env.SPOTIFY_CLIENT_SECRET!;
@@ -90,6 +100,13 @@ export async function playTrack(albumUri: string, trackOffset: number) {
       }),
     },
   );
+}
+
+export async function getDevices() {
+  const authHeader = await createAuthHeader();
+  return await ofetch("https://api.spotify.com/v1/me/player/devices", {
+    headers: authHeader,
+  });
 }
 
 export async function updateSpotifyHistory() {

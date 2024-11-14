@@ -1,9 +1,25 @@
 <script setup lang="ts">
-import type { SpotifyTrackApiPlayInfo, SpotifyTrackDb } from "~/server/services/spotify";
+import type { SpotifyDevice, SpotifyTrackApiPlayInfo, SpotifyTrackDb } from "~/server/services/spotify";
 
 const client = useSupabaseClient();
 
 const data = ref<SpotifyTrackDb[]>([]);
+
+const { data: spotifyDevicesRaw } = await useFetch("/api/spotify/devices");
+
+const spotifyDevices = computed(() => {
+  if (spotifyDevicesRaw.value) {
+    return spotifyDevicesRaw.value.map((device: SpotifyDevice) => ({
+      ...device,
+      label: device.name,
+      value: device.id,
+    }));
+  }
+  return [];
+});
+
+const spotifyDeviceSelected = useLocalStorage('spotifyDevice', undefined);
+
 
 async function loadData() {
   const response = await client
@@ -12,7 +28,7 @@ async function loadData() {
     // .ilike("title", "%Zwerge%")
     .order("played_at", { ascending: false })
     .limit(10)
-    .returns<SpotifyTrackDb[]>()
+    .returns<SpotifyTrackDb[]>();
   if (response.data) {
 
     data.value = response.data;
@@ -25,7 +41,7 @@ async function loadAlbumData() {
     .select("*")
     .order("played_at", { ascending: false })
     .limit(10)
-    .returns<SpotifyTrackDb[]>()
+    .returns<SpotifyTrackDb[]>();
   if (response.data) {
     data.value = response.data;
   }
@@ -42,11 +58,11 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
 
 <template>
   <div>
-    <ULandingHero
-      description="Nuxt UI Pro is a collection of premium Vue components built on top of Nuxt UI to create beautiful & responsive Nuxt applications in minutes.">
-      <template #title>
-        The <span class="text-primary block lg:inline-block">Building Blocks</span> for Modern Web apps
-      </template>
+    <UContainer>
+
+      <section>
+        <URadioGroup v-model="spotifyDeviceSelected" legend="Spotify Device" :options="spotifyDevices" />
+      </section>
       <div>
         <UButton @click="loadAlbumData()">Load</UButton>
       </div>
@@ -60,10 +76,6 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
       <div>
         <pre>{{ data }}</pre>
       </div>
-    </ULandingHero>
-
-    <ULandingSection title="The freedom to build anything" align="left" />
-
-    <ULandingSection title="The flexibility to control your data" align="right" />
+    </UContainer>
   </div>
 </template>
