@@ -30,3 +30,7 @@ curl -X PUT "https://api.spotify.com/v1/me/player/play?device_id=$SPOTIFY_DEVICE
 
 curl -X PUT "https://api.spotify.com/v1/me/player/play?device_id=$SPOTIFY_DEVICE_ID" --data '{"context_uri": "spotify:album:31a23VDmcDdBiZIxB6x3Pg", "offset": {"position": 1}}' -H "Authorization: Bearer $SPOTIFY_ACCESS_TOKEN"
 
+curl --request GET \
+  --url https://api.spotify.com/v1/artists/0uIPtZW0JINk9gTdg1AXkm \
+  -H "Authorization: Bearer $SPOTIFY_ACCESS_TOKEN"
+

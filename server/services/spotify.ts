@@ -4,14 +4,17 @@ import { ofetch } from "ofetch";
 
 const databaseUrl = env.SUPABASE_DATABASE_URL!;
 
-interface SpotifyTrackDb {
+export interface SpotifyTrackDb {
   id: number;
-  track: any;
-  track_id: string;
   artist: string;
   title: string;
+  album_title: string;
   played_at: string;
+  track_number: number;
+  album_uri: string;
 }
+
+export type SpotifyTrackApiPlayInfo = Pick<SpotifyTrackDb, "album_uri" | "track_number">;
 
 async function refreshAccessToken(): Promise<string> {
   const spotifyClientId = env.SPOTIFY_CLIENT_ID!;
