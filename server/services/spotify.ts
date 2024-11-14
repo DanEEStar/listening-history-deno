@@ -81,11 +81,15 @@ export async function lastSpotifyTrackDb(): Promise<any> {
   return null;
 }
 
-export async function playTrack(albumUri: string, trackOffset: number) {
+export async function playTrack(albumUri: string, trackOffset: number, deviceId: string | null = null) {
+  if (!deviceId) {
+    deviceId = env.SPOTIFY_DEVICE_ID!;
+  }
+  console.log(albumUri, trackOffset, deviceId);
+
   const authHeader = await createAuthHeader();
-  console.log(albumUri, trackOffset);
   return await ofetch(
-    `https://api.spotify.com/v1/me/player/play?device_id=${env.SPOTIFY_DEVICE_ID!}`,
+    `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
     {
       method: "PUT",
       headers: {

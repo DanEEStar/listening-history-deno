@@ -18,39 +18,38 @@ const spotifyDevices = computed(() => {
   return [];
 });
 
-const spotifyDeviceSelected = useLocalStorage('spotifyDevice', undefined);
+const spotifyDeviceSelected = useLocalStorage("spotifyDevice", undefined);
 
-
-async function loadData() {
-  const response = await client
+const { data: lastTracks } = await useAsyncData("lastTracks", async () => {
+  const { data } = await client
     .from("spotify_tracks")
     .select("id, artist, title, album_title, played_at, track->track_number, album_uri:track->album->uri")
     // .ilike("title", "%Zwerge%")
     .order("played_at", { ascending: false })
     .limit(10)
     .returns<SpotifyTrackDb[]>();
-  if (response.data) {
+  return data;
+});
 
-    data.value = response.data;
-  }
-}
-
-async function loadAlbumData() {
-  const response = await client
+const { data: audiobooks } = await useAsyncData("audiobooks", async () => {
+  const { data } = await client
     .rpc("get_album_tracks")
     .select("*")
     .order("played_at", { ascending: false })
     .limit(10)
     .returns<SpotifyTrackDb[]>();
-  if (response.data) {
-    data.value = response.data;
-  }
-}
+
+  return data;
+});
 
 async function playTrack(track: SpotifyTrackApiPlayInfo) {
   const res = await $fetch("/api/spotify/play", {
     method: "POST",
-    body: track,
+    body: {
+      track_number: track.track_number,
+      album_uri: track.album_uri,
+      device_id: spotifyDeviceSelected.value,
+    }
   });
 }
 
@@ -60,22 +59,31 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
   <div>
     <UContainer>
 
-      <section>
+      <section class="my-8">
         <URadioGroup v-model="spotifyDeviceSelected" legend="Spotify Device" :options="spotifyDevices" />
       </section>
-      <div>
-        <UButton @click="loadAlbumData()">Load</UButton>
-      </div>
-      <div>
-        <div v-for="track in data" :key="track.id" class="p-2">
-          <div>{{ track.title }}</div>
-          <div>{{ track.artist }}</div>
-          <UButton @click="playTrack(track)">Play</UButton>
+
+      <section class="my-8 flex">
+        <div class="w-1/2">
+          <h3 class="text-2xl">Audiobooks</h3>
+          <div v-for="track in audiobooks" :key="track.id" class="py-2">
+            <div>{{ track.artist }}</div>
+            <div>{{ track.album_title }}</div>
+            <div>{{ track.title }}</div>
+            <UButton @click="playTrack(track)">Play</UButton>
+          </div>
         </div>
-      </div>
-      <div>
-        <pre>{{ data }}</pre>
-      </div>
+
+        <div class="w-1/2">
+          <h3 class="text-2xl">Last Tracks</h3>
+          <div v-for="track in lastTracks" :key="track.id" class="py-2">
+            <div>{{ track.artist }}</div>
+            <div>{{ track.album_title }}</div>
+            <div>{{ track.title }}</div>
+            <UButton @click="playTrack(track)">Play</UButton>
+          </div>
+        </div>
+      </section>
     </UContainer>
   </div>
 </template>
