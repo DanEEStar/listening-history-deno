@@ -23,6 +23,17 @@ async function onSubmit() {
   });
   if (error) console.log(error);
 }
+
+async function signInWithGithub() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: "https://listening-history-deno.deno.dev/confirm",
+    },
+  });
+  if (error) console.log(error);
+}
+
 </script>
 
 <template>
@@ -36,5 +47,9 @@ async function onSubmit() {
         Submit
       </UButton>
     </UForm>
+
+    <div>
+      <UButton @click="signInWithGithub">Github Login</UButton>
+    </div>
   </UContainer>
 </template>
