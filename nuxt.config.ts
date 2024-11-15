@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   routeRules: {
     "/confirm": { ssr: false },
+    "/login": { ssr: false },
   },
   modules: ["@nuxt/ui", "@vueuse/nuxt", "@nuxtjs/supabase"],
   extends: ["@nuxt/ui-pro"],
