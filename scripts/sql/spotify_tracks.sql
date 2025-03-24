@@ -23,17 +23,20 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT
-        max(spotify_tracks.id) AS id,
-        max(spotify_tracks.played_at) AS played_at,
-        COALESCE(max(spotify_tracks.artist), '') AS artist,
-        COALESCE(max(spotify_tracks.title), '') AS title,
-        COALESCE(max(spotify_tracks.album_title), '') AS album_title,
-        COALESCE(max(spotify_tracks.track->>'track_number'), '') AS track_number,
-        COALESCE(max(spotify_tracks.track->'album'->>'uri'), '') AS album_uri
-    FROM spotify_tracks
-    WHERE (track->'album'->>'total_tracks')::int > 50
-    GROUP BY track->'album'->>'id'
+    SELECT *
+    FROM (
+        SELECT DISTINCT ON (track->'album'->>'id')
+            spotify_tracks.id,
+            spotify_tracks.played_at,
+            COALESCE(spotify_tracks.artist, '') AS artist,
+            COALESCE(spotify_tracks.title, '') AS title,
+            COALESCE(spotify_tracks.album_title, '') AS album_title,
+            COALESCE(spotify_tracks.track->>'track_number', '') AS track_number,
+            COALESCE(spotify_tracks.track->'album'->>'uri', '') AS album_uri
+        FROM spotify_tracks
+        WHERE (track->'album'->>'total_tracks')::int > 50
+        ORDER BY track->'album'->>'id', played_at DESC
+    ) AS latest_tracks
     ORDER BY played_at DESC;
 END;
 $$ LANGUAGE plpgsql;
