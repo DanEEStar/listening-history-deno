@@ -48,7 +48,10 @@ const {
   return data as SpotifyTrackDb[] || [];
 });
 
-const { data: audiobooks, refresh: refreshAudiobooks } = await useAsyncData<SpotifyTrackDb[]>("audiobooks", async () => {
+const {
+  data: audiobooks,
+  refresh: refreshAudiobooks,
+} = await useAsyncData<SpotifyTrackDb[]>("audiobooks", async () => {
   const query = supabase
     .rpc("get_album_tracks")
     .select("*")
@@ -75,7 +78,8 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
   const res = await $fetch("/api/spotify/play", {
     method: "POST",
     body: {
-      track_number: track.album_index || track.track_number,
+      // `album_index` somehow is 1-based...
+      track_number: (track.album_index + 1) || track.track_number,
       album_uri: track.album_uri,
       device_id: spotifyDeviceSelected.value,
     },
