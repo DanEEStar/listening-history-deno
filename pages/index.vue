@@ -75,11 +75,15 @@ const {
 });
 
 async function playTrack(track: SpotifyTrackApiPlayInfo) {
+  let track_number = track.track_number;
+  if (track.album_index) {
+    track_number = track.album_index + 1;
+  }
   const res = await $fetch("/api/spotify/play", {
     method: "POST",
     body: {
       // `album_index` somehow is 1-based...
-      track_number: (track.album_index + 1) || track.track_number,
+      track_number: track_number,
       album_uri: track.album_uri,
       device_id: spotifyDeviceSelected.value,
     },

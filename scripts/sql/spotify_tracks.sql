@@ -17,8 +17,8 @@ RETURNS TABLE (
     artist text,
     title text,
     album_title text,
-    track_number text,
-    album_index text,
+    track_number int,
+    album_index int,
     album_uri text
 ) AS $$
 BEGIN
@@ -31,9 +31,9 @@ BEGIN
             COALESCE(spotify_tracks.artist, '') AS artist,
             COALESCE(spotify_tracks.title, '') AS title,
             COALESCE(spotify_tracks.album_title, '') AS album_title,
-            COALESCE(spotify_tracks.track->>'track_number', '') AS track_number,
-            COALESCE(spotify_tracks.track->>'album_index', '') AS album_index,
-            COALESCE(spotify_tracks.track->'album'->>'uri', '') AS album_uri
+            (track->>'track_number')::int AS track_number,
+            (track->>'album_index')::int AS album_index,
+            COALESCE(track->'album'->>'uri', '') AS album_uri
         FROM spotify_tracks
         WHERE (track->'album'->>'total_tracks')::int > 50
         ORDER BY track->'album'->>'id', played_at DESC
