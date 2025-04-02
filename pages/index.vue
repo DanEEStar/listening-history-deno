@@ -30,7 +30,7 @@ const {
 } = await useAsyncData<SpotifyTrackDb[]>("lastTracks", async () => {
   const query = supabase
     .from("spotify_tracks")
-    .select("id, artist, title, album_title, played_at, track->track_number, album_uri:track->album->uri")
+    .select("id, artist, title, album_title, played_at, track->track_number, track->album_index, album_uri:track->album->uri")
     .order("played_at", { ascending: false })
     .limit(10);
 
@@ -75,7 +75,7 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
   const res = await $fetch("/api/spotify/play", {
     method: "POST",
     body: {
-      track_number: track.track_number,
+      track_number: track.album_index || track.track_number,
       album_uri: track.album_uri,
       device_id: spotifyDeviceSelected.value,
     },
@@ -106,6 +106,8 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
             <div>{{ track.artist }}</div>
             <div>{{ track.album_title }}</div>
             <div>{{ track.title }}</div>
+            <div>Track number: {{ track.track_number }}</div>
+            <div>Album index: {{ track.album_index }}</div>
             <div>{{ track.played_at }}</div>
             <UButton @click="playTrack(track)">Play</UButton>
           </div>
@@ -117,6 +119,8 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
             <div>{{ track.artist }}</div>
             <div>{{ track.album_title }}</div>
             <div>{{ track.title }}</div>
+            <div>{{ track.track_number }}</div>
+            <div>{{ track.album_index }}</div>
             <div>{{ track.played_at }}</div>
             <UButton @click="playTrack(track)">Play</UButton>
           </div>

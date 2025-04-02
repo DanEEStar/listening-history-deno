@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS spotify_tracks (
 
 CREATE INDEX idx_played_at ON spotify_tracks (played_at);
 
-
 CREATE OR REPLACE FUNCTION get_album_tracks()
 RETURNS TABLE (
     id int,
@@ -19,6 +18,7 @@ RETURNS TABLE (
     title text,
     album_title text,
     track_number text,
+    album_index text,
     album_uri text
 ) AS $$
 BEGIN
@@ -32,6 +32,7 @@ BEGIN
             COALESCE(spotify_tracks.title, '') AS title,
             COALESCE(spotify_tracks.album_title, '') AS album_title,
             COALESCE(spotify_tracks.track->>'track_number', '') AS track_number,
+            COALESCE(spotify_tracks.track->>'album_index', '') AS album_index,
             COALESCE(spotify_tracks.track->'album'->>'uri', '') AS album_uri
         FROM spotify_tracks
         WHERE (track->'album'->>'total_tracks')::int > 50
@@ -45,7 +46,7 @@ $$ LANGUAGE plpgsql;
 
 select *
 from get_album_tracks()
-where album_title ilike '%zwerge%';
+where album_title ilike '%guten%';
 
 
 select *

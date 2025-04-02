@@ -113,7 +113,53 @@ export async function getDevices() {
   });
 }
 
-export async function updateSpotifyHistory() {
+// 🔍 Fetch full album tracklist and compute index of trackId
+export async function getAlbumTrackIndex(albumUri: string, trackId: string): Promise<number | null> {
+  const albumId = albumUri.split(":").pop();
+  if (!albumId) return null;
+
+  const authHeader = await createAuthHeader();
+  const allTracks: any[] = [];
+
+  let offset = 0;
+  const limit = 50;
+
+  while (true) {
+    const res = await ofetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+      headers: authHeader,
+      params: {
+        offset,
+        limit,
+      },
+    });
+
+    allTracks.push(...res.items);
+
+    if (res.items.length < limit) break;
+    offset += limit;
+  }
+
+  allTracks.sort((a, b) =>
+    a.disc_number === b.disc_number
+      ? a.track_number - b.track_number
+      : a.disc_number - b.disc_number,
+  );
+
+  const index = allTracks.findIndex((t) => t.id === trackId);
+  return index >= 0 ? index : null;
+}
+
+// ⚡ Fast path if disc_number === 1
+export async function getAlbumTrackIndexFast(track: any): Promise<number | null> {
+  if (track.disc_number === 1) {
+    return track.track_number - 1;
+  }
+
+  return await getAlbumTrackIndex(track.album.uri, track.id);
+}
+
+// 📥 Update database with most recent track if new
+export async function updateSpotifyHistory(forceUpdate = false) {
   const recentlyPlayedApi = await recentlyPlayed();
   const lastPlayedApiTrack = recentlyPlayedApi[0]?.track;
 
@@ -126,25 +172,29 @@ export async function updateSpotifyHistory() {
     const lastPlayedDbTrack = await lastSpotifyTrackDb();
     const dbTrackId = lastPlayedDbTrack?.track_id;
 
+    const albumIndex = await getAlbumTrackIndexFast(lastPlayedApiTrack);
+    console.log("album index of current track", albumIndex);
+
     const trackInfo = {
       apiTrackId,
       apiTrackName: lastPlayedApiTrack.name,
       dbTrackId,
       dbTrackName: lastPlayedDbTrack?.title,
+      albumIndex,
     };
     console.log("track info", trackInfo);
 
-    if (dbTrackId && apiTrackId !== dbTrackId) {
+    if (dbTrackId && apiTrackId !== dbTrackId || forceUpdate) {
       console.log("tracks different -> updating db");
       const sql = postgres(databaseUrl);
 
-      await sql`insert into spotify_tracks (track) values (${lastPlayedApiTrack})`;
-      console.log("updated db successfully");
-      return {
-        message: "updated db successfully",
-        trackInfo,
-        lastPlayedDbTrack,
+      const enrichedTrack = {
+        ...lastPlayedApiTrack,
+        album_index: albumIndex,
       };
+
+      await sql`insert into spotify_tracks (track) values (${enrichedTrack})`;
+      console.log("updated db successfully");
     } else {
       console.log("tracks same -> no update needed");
       return {
@@ -160,40 +210,8 @@ export async function updateSpotifyHistory() {
   }
 }
 
-/*
-export async function searchSpotify(query: string) {
-  if (query.length < 3) {
-    return [];
-  }
-
-  const client = new postgres.Client(databaseUrl);
-  await client.connect();
-  return await client.queryArray(
-    `
-    select id, track_id, artist, title, played_at
-    from spotify_tracks
-    where artist ilike $1 or title ilike $1
-    order by played_at desc
-    limit 10;
-    `,
-    [`%${query}%`]
-  );
-}
- */
-
 async function main() {
-  // searchSpotify("ein mann namens ove").then((result) => {
-  //   console.log(result.rows);
-  // });
-  // const lastSpotifyTrack = await lastSpotifyTrackDb();
-  // console.log(lastSpotifyTrack);
-  // const accessToken = await refreshAccessToken();
-  // console.log(accessToken);
-  // const recentlyPlayedTracks = await recentlyPlayed();
-  // console.log(recentlyPlayedTracks[0].track);
-  // const lastPlayedTrackDb = await lastSpotifyTrackDb();
-  // console.log(lastPlayedTrackDb);
-  const updateResult = await updateSpotifyHistory();
+  const updateResult = await updateSpotifyHistory(true);
   console.log(updateResult);
   process.exit(0);
 }
