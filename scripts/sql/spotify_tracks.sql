@@ -19,7 +19,8 @@ RETURNS TABLE (
     album_title text,
     track_number int,
     album_index int,
-    album_uri text
+    album_uri text,
+    album_image text
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -33,7 +34,8 @@ BEGIN
             COALESCE(spotify_tracks.album_title, '') AS album_title,
             (track->>'track_number')::int AS track_number,
             (track->>'album_index')::int AS album_index,
-            COALESCE(track->'album'->>'uri', '') AS album_uri
+            COALESCE(track->'album'->>'uri', '') AS album_uri,
+            COALESCE(track->'album'->'images'->0->>'url', '') AS album_image
         FROM spotify_tracks
         WHERE (track->'album'->>'total_tracks')::int > 50
         ORDER BY track->'album'->>'id', played_at DESC

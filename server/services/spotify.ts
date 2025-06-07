@@ -12,6 +12,7 @@ export interface SpotifyTrackDb {
   played_at: string;
   track_number: number;
   album_uri: string;
+  album_image?: string;
 }
 
 export type SpotifyTrackApiPlayInfo = Pick<SpotifyTrackDb, "album_uri" | "track_number">;

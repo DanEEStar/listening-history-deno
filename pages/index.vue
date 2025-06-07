@@ -30,7 +30,7 @@ const {
 } = await useAsyncData<SpotifyTrackDb[]>("lastTracks", async () => {
   const query = supabase
     .from("spotify_tracks")
-    .select("id, artist, title, album_title, played_at, track->track_number, track->album_index, album_uri:track->album->uri")
+    .select("id, artist, title, album_title, played_at, track->track_number, track->album_index, album_uri:track->album->uri, album_image:track->album->images->0->url")
     .order("played_at", { ascending: false })
     .limit(10);
 
@@ -70,8 +70,6 @@ const {
   }
 
   return data as SpotifyTrackDb[] || [];
-
-  return data;
 });
 
 async function playTrack(track: SpotifyTrackApiPlayInfo) {
