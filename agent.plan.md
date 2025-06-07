@@ -1,33 +1,22 @@
+Make the index page mobile-friendly. It should show the two sections (audiobooks and tracks) in a single column layout on small screens, with proper spacing and typography. The play buttons should be large enough to be easily tappable on mobile devices.
+On larger screens, maintain the current two-column layout but improve spacing and visual hierarchy. Ensure that the play buttons are still accessible and visually distinct.
 
-✅ COMPLETED: Fixed NuxtUI v3 styling issues
-- Created assets/css/main.css with required imports (@import "tailwindcss"; @import "@nuxt/ui";)
-- Added CSS file to nuxt.config.ts configuration
-- NuxtUI components should now render with proper styling
-- TailwindCSS and NuxtUI styles are now properly loaded
+✅ COMPLETED: Made index page mobile-friendly with responsive design
+- Implemented responsive layout: single column on mobile (< lg), two columns on large screens
+- Enhanced TrackItem component with card-based design and better mobile spacing
+- Added large, tappable play buttons (min-height: 44px) with play icons for better UX
+- Improved typography hierarchy with larger headings and better contrast
+- Made search section responsive with stacked inputs on mobile, side-by-side on larger screens
+- Added proper background colors and shadows for better visual separation
+- Enhanced Spotify device selection with responsive grid layout
+- Added consistent padding and spacing throughout for better mobile experience
 
 ##########################################
 
-✅ COMPLETED: Upgraded Nuxt 3 and NuxtUI to latest versions
-- Nuxt: 3.14.159 → 3.17.5
-- NuxtUI: 2.19.2 → 2.22.0
-- TailwindCSS is automatically included with NuxtUI (no explicit installation needed)
-- Application tested successfully on development server
-
-✅ COMPLETED: Upgraded NuxtUI to v3.1.3
-- Successfully installed @nuxt/ui v3.1.3
-- Application runs with some TailwindCSS warnings from @nuxt/ui-pro compatibility
-- Development server starts successfully on port 3001
-
-✅ COMPLETED: Upgraded all npm packages and fixed code
-- @nuxt/devtools: 1.6.0 → 2.5.0
-- @nuxt/ui-pro: 1.5.0 → 3.1.3
-- @nuxtjs/supabase: 1.4.2 → 1.5.1
-- @vueuse/core: 11.2.0 → 13.3.0
-- @vueuse/nuxt: 11.2.0 → 13.3.0
-- postgres: 3.4.5 → 3.4.7
-- prettier: 3.3.3 → 3.5.3
-- vue: 3.5.12 → 3.5.16
-- vue-router: 4.4.5 → 4.5.1
-- type-fest: 4.26.1 → 4.41.0
-- Fixed NuxtUI Pro v3 configuration in nuxt.config.ts (changed from extends to modules)
-- Application runs successfully without errors on port 3000
+✅ COMPLETED: Refactored track rendering into TrackItem component
+- Created components/TrackItem.vue with reusable track display logic
+- Added proper TypeScript props interface for SpotifyTrackApiPlayInfo
+- Implemented emit system for play button clicks
+- Updated index.vue to use TrackItem component for both audiobooks and tracks
+- Improved styling with better spacing, typography, and visual hierarchy
+- Eliminated code duplication between audiobooks and tracks sections

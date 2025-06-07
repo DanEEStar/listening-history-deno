@@ -93,44 +93,62 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
 </script>
 
 <template>
-  <div>
-    <UContainer>
+  <div class="min-h-screen bg-gray-50">
+    <UContainer class="py-6 px-4 sm:px-6 lg:px-8">
 
-      <section class="my-4">
-        <URadioGroup v-model="spotifyDeviceSelected" legend="Spotify Device" :options="spotifyDevices" />
+      <section class="my-6">
+        <div class="space-y-4">
+          <h2 class="text-lg font-semibold text-gray-900">Spotify Device</h2>
+          <URadioGroup 
+            v-model="spotifyDeviceSelected" 
+            :options="spotifyDevices"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+          />
+        </div>
       </section>
 
       <USeparator />
 
       <section class="my-8">
-        <UInput v-model="searchQuery" placeholder="Search" />
-        <UButton @click="search()">Search</UButton>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <UInput 
+            v-model="searchQuery" 
+            placeholder="Search tracks, artists, or albums..."
+            class="flex-1"
+            size="lg"
+          />
+          <UButton 
+            @click="search()" 
+            size="lg"
+            class="w-full sm:w-auto px-8"
+          >
+            Search
+          </UButton>
+        </div>
       </section>
 
-      <section class="my-8 flex">
-        <div class="w-1/2">
-          <h3 class="text-2xl">Audiobooks</h3>
-          <div v-for="track in audiobooks" :key="track.id" class="py-2">
-            <div>{{ track.artist }}</div>
-            <div>{{ track.album_title }}</div>
-            <div>{{ track.title }}</div>
-            <div>Track number: {{ track.track_number }}</div>
-            <div>Album index: {{ track.album_index }}</div>
-            <div>{{ track.played_at }}</div>
-            <UButton @click="playTrack(track)">Play</UButton>
+      <section class="my-8 flex flex-col lg:flex-row gap-8">
+        <div class="w-full lg:w-1/2">
+          <h3 class="text-2xl lg:text-3xl mb-6 font-bold text-gray-900">Audiobooks</h3>
+          <div class="space-y-4">
+            <TrackItem
+              v-for="track in audiobooks"
+              :key="track.id"
+              :track="track"
+              @play="playTrack"
+            />
           </div>
         </div>
 
-        <div class="w-1/2">
-          <h3 class="text-2xl">Last Tracks</h3>
-          <div v-for="track in lastTracks" :key="track.id" class="py-2">
-            <div>{{ track.artist }}</div>
-            <div>{{ track.album_title }}</div>
-            <div>{{ track.title }}</div>
-            <div>{{ track.track_number }}</div>
-            <div>{{ track.album_index }}</div>
-            <div>{{ track.played_at }}</div>
-            <UButton @click="playTrack(track)">Play</UButton>
+        <div class="w-full lg:w-1/2 mt-8 lg:mt-0">
+          <h3 class="text-2xl lg:text-3xl mb-6 font-bold text-gray-900">Last Tracks</h3>
+          <div class="space-y-4">
+            <TrackItem
+              v-for="track in lastTracks"
+              :key="track.id"
+              :track="track"
+              @play="playTrack"
+            />
           </div>
         </div>
       </section>
