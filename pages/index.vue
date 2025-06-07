@@ -100,7 +100,7 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
         <URadioGroup v-model="spotifyDeviceSelected" legend="Spotify Device" :options="spotifyDevices" />
       </section>
 
-      <UDivider />
+      <USeparator />
 
       <section class="my-8">
         <UInput v-model="searchQuery" placeholder="Search" />

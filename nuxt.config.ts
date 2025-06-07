@@ -6,6 +6,6 @@ export default defineNuxtConfig({
     "/confirm": { ssr: false },
     "/login": { ssr: false },
   },
-  modules: ["@nuxt/ui", "@vueuse/nuxt", "@nuxtjs/supabase"],
-  extends: ["@nuxt/ui-pro"],
+  modules: ["@nuxt/ui", "@nuxt/ui-pro", "@vueuse/nuxt", "@nuxtjs/supabase"],
+  css: ["~/assets/css/main.css"],
 });
