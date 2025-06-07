@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "deploy": "npm run build && (cd .output && deployctl deploy --project=listening-history-deno server/index.mjs)",
     "gen-types": "supabase gen types --project-id=kwbeldipfntekywbzrqv > database.generated.types.ts"
   },
   "dependencies": {

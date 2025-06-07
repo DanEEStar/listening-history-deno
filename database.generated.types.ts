@@ -79,7 +79,8 @@ export type Database = {
           artist: string
           title: string
           album_title: string
-          track_number: string
+          track_number: number
+          album_index: number
           album_uri: string
         }[]
       }
