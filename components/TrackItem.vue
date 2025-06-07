@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { SpotifyTrackApiPlayInfo } from "~/server/services/spotify";
+import type { SpotifyTrackDb, SpotifyTrackApiPlayInfo } from "~/server/services/spotify";
 
 interface Props {
-  track: SpotifyTrackApiPlayInfo;
+  track: SpotifyTrackDb;
+  isAudiobook?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -58,9 +59,12 @@ function formatDate(dateString: string) {
       <!-- Track Info -->
       <div class="flex-1 min-w-0 space-y-3">
         <div class="space-y-1">
-          <div class="font-medium text-base text-gray-900 truncate">{{ track.title }}</div>
+          <div class="font-medium text-base text-gray-900 truncate">
+            {{ isAudiobook ? track.album_title : track.title }}
+          </div>
           <div class="text-sm text-gray-600 truncate">{{ track.artist }}</div>
-          <div class="text-sm text-gray-500 truncate">{{ track.album_title }}</div>
+          <div v-if="!isAudiobook" class="text-sm text-gray-500 truncate">{{ track.album_title }}</div>
+          <div v-else class="text-sm text-gray-500 truncate">{{ track.title }}</div>
         </div>
         
         <div class="text-xs text-gray-400 flex flex-wrap gap-3">

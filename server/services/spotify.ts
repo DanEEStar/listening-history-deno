@@ -13,9 +13,10 @@ export interface SpotifyTrackDb {
   track_number: number;
   album_uri: string;
   album_image?: string;
+  album_index?: number;
 }
 
-export type SpotifyTrackApiPlayInfo = Pick<SpotifyTrackDb, "album_uri" | "track_number">;
+export type SpotifyTrackApiPlayInfo = Pick<SpotifyTrackDb, "album_uri" | "track_number" | "album_index">;
 
 export interface SpotifyDevice {
   id: string;

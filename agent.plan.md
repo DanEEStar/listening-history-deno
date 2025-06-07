@@ -1,6 +1,26 @@
-The changes for the thumbnail image are working a bit.
-But the "Audiobooks" list is broken. Please extend the PostgresSQL function `get_album_tracks` in "spotify_tracks.sql" to also return the album image URL from the Spotify API data.
-and don't do a custom sql query.
+The "Spotify Device" list seems not to work anymore, since the beginning of our session...
+Can you fix it?
+
+
+##########################################
+✅ COMPLETED: Fixed Spotify Device selection for NuxtUI v3 compatibility
+- Updated URadioGroup component to use `items` prop instead of deprecated `options` prop
+- Added `variant="card"` for better visual presentation
+- Enhanced device information display with:
+  - Device name as main label
+  - Device type, active status, and volume percentage as description
+  - Disabled state for restricted inactive devices
+- Updated SpotifyTrackApiPlayInfo type to include album_index property
+- Fixed TypeScript compilation errors and removed unused variables
+- Spotify device selection now works properly with NuxtUI v3
+✅ COMPLETED: Updated audiobooks display to show album name as main title
+- Added `isAudiobook` prop to TrackItem component to distinguish audiobooks from regular tracks
+- Updated TrackItem template to conditionally display:
+  - For audiobooks: Album title as main title, track title as secondary info
+  - For regular tracks: Track title as main title, album title as secondary info
+- Enhanced SpotifyTrackDb interface to include `album_index` property
+- Updated index.vue to pass `isAudiobook: true` for audiobooks section and `isAudiobook: false` for tracks section
+- Audiobooks now properly display with album name prominently featured as the main title
 
 ✅ COMPLETED: Fixed audiobooks list by updating PostgreSQL function
 - Extended `get_album_tracks()` function to include `album_image` field in return table
@@ -9,8 +29,6 @@ and don't do a custom sql query.
 - Created update script at `scripts/update_album_function.sql` for database deployment
 - Regenerated database types to reflect the updated function signature
 - Audiobooks list now properly displays with album thumbnails using the same component
-
-##########################################
 
 ✅ COMPLETED: Added album thumbnail images to track lists
 - Updated database queries to include album image URLs from Spotify track data

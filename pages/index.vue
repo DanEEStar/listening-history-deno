@@ -7,9 +7,10 @@ const { data: spotifyDevicesRaw } = await useFetch("/api/spotify/devices");
 const spotifyDevices = computed(() => {
   if (spotifyDevicesRaw.value) {
     return spotifyDevicesRaw.value.map((device: SpotifyDevice) => ({
-      ...device,
       label: device.name,
+      description: `${device.type}${device.is_active ? ' (Active)' : ''}${device.volume_percent ? ` - ${device.volume_percent}%` : ''}`,
       value: device.id,
+      disabled: !device.is_active && device.is_restricted,
     }));
   }
   return [];
@@ -77,7 +78,7 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
   if (track.album_index) {
     track_number = track.album_index + 1;
   }
-  const res = await $fetch("/api/spotify/play", {
+  await $fetch("/api/spotify/play", {
     method: "POST",
     body: {
       // `album_index` somehow is 1-based...
@@ -99,7 +100,8 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
           <h2 class="text-lg font-semibold text-gray-900">Spotify Device</h2>
           <URadioGroup 
             v-model="spotifyDeviceSelected" 
-            :options="spotifyDevices"
+            :items="spotifyDevices"
+            variant="card"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
           />
         </div>
@@ -133,6 +135,7 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
               v-for="track in audiobooks"
               :key="track.id"
               :track="track"
+              :is-audiobook="true"
               @play="playTrack"
             />
           </div>
@@ -145,6 +148,7 @@ async function playTrack(track: SpotifyTrackApiPlayInfo) {
               v-for="track in lastTracks"
               :key="track.id"
               :track="track"
+              :is-audiobook="false"
               @play="playTrack"
             />
           </div>
