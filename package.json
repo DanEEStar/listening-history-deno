@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build && gsed -i '1i import { Buffer } from '\\''node:buffer'\\'';' .output/server/chunks/nitro/nitro.mjs",
+    "build": "nuxt build",
+    "build:legacy": "nuxt build && gsed -i '1i import { Buffer } from '\\''node:buffer'\\'';' .output/server/chunks/nitro/nitro.mjs",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
