@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Apple Music — Get Music User Token</title>
+<style>
+body {
+  font: 16px system-ui, sans-serif;
+  margin: 2rem;
+}
+
+button {
+  font: inherit;
+  padding: .6rem 1rem;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: .5rem;
+}
+</style>
+
+<h1>Get Apple Music User Token</h1>
+<ol>
+  <li>Click the button, sign in with your Apple ID (if asked), and grant access.</li>
+  <li>Copy the token below.</li>
+</ol>
+
+<button id="go">Authorize & show token</button>
+<pre id="out">(token will appear here)</pre>
+
+<script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"></script>
+<script>
+(async() => {
+  // 1) Paste your short-lived Developer Token here
+  const DEV_TOKEN = "<APPLE_MUSIC_DEV_TOKEN>";
+
+  // 2) Configure MusicKit
+  // @ts-ignore
+  MusicKit.configure({
+    developerToken: DEV_TOKEN,
+    app: { name: "TokenGrab", build: "1.0" },
+  });
+
+  const out = document.getElementById("out");
+  document.getElementById("go").onclick = async() => {
+    try {
+      // 3) Trigger Apple sign-in/consent; returns Music-User-Token
+      // @ts-ignore
+      const token = await MusicKit.getInstance().authorize();
+      out.textContent = token;
+      console.log("Music-User-Token:", token);
+    } catch(e) {
+      out.textContent = "Error: " + (e && e.message || e);
+      console.error(e);
+    }
+  };
+})();
+</script>

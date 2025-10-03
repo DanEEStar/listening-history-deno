@@ -27,3 +27,4 @@ logs
 .env.*
 !.env.example
 .vercel
+supabase/.temp
