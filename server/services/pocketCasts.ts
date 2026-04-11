@@ -37,18 +37,15 @@ async function createAuthHeader() {
 async function fetchHistory() {
   const authHeader = await createAuthHeader();
 
-  return await ofetch(
-    "https://api.pocketcasts.com/user/history",
-    {
-      headers: authHeader,
-      method: "POST",
-    },
-  );
+  return await ofetch("https://api.pocketcasts.com/user/history", {
+    headers: authHeader,
+    method: "POST",
+  });
 }
 
 async function insertEpisode(
   episodeJson: PocketCastsEpisode,
-  ignorePlayingStatus = false,
+  ignorePlayingStatus = false
 ) {
   if (
     episodeJson.playingStatus === 3 ||
@@ -71,10 +68,7 @@ async function insertEpisode(
   }
 }
 
-export async function updatePocketCastsHistory(
-  size = 10,
-  ignorePlayingStatus = false,
-) {
+export async function updatePocketCastsHistory(size = 10, ignorePlayingStatus = false) {
   const history = await fetchHistory();
   for (const episode of history.episodes.slice(0, size)) {
     await insertEpisode(episode, ignorePlayingStatus);
@@ -121,7 +115,6 @@ async function main() {
   // // console.log(lastEpisode);
   const history = await fetchHistory();
   console.log(history.episodes[1]);
-
 }
 
 // @ts-ignore

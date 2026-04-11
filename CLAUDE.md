@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Using agent.plan.md for Task Planning
 
 When working on tasks, check the `agent.plan.md` file first for current instructions. This file serves as a communication channel where:
+
 - Instructions for Claude Code are placed at the top of the file
 - Completed short work summaries are added below the `##########################################` divider
 - This approach allows for persistent task tracking across Claude Code sessions
@@ -44,6 +45,7 @@ This is a Nuxt 3 application that tracks listening history from Spotify and Pock
 ### Environment Variables
 
 Required environment variables (see example.env):
+
 - Spotify: CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, DEVICE_ID
 - Supabase: DATABASE_URL
 - Pocket Casts: USER, PW

@@ -59,27 +59,25 @@ function Search({ search, tracks }: { search: string; tracks: any[] }) {
   return (
     <form
       method="get"
-      class="min-h-screen p-4 flex gap-8 flex-col items-center justify-center"
+      class="flex min-h-screen flex-col items-center justify-center gap-8 p-4"
     >
       <input
         type="text"
         name="search"
         value={search}
-        class="h-10 w-96 px-4 py-3 bg-gray-100 rounded-md leading-4 placeholder:text-gray-400"
+        class="h-10 w-96 rounded-md bg-gray-100 px-4 py-3 leading-4 placeholder:text-gray-400"
         placeholder="Search and press enter..."
       />
       <output name="result" for="search" class="w-10/12 lg:w-1/2">
         <ul class="space-y-2">
           {tracks.length > 0 &&
             tracks.map((track) => (
-              <li class="hover:bg-gray-100 p-1.5 rounded-md">
+              <li class="rounded-md p-1.5 hover:bg-gray-100">
                 <div class="font-semibold">{track[3]}</div>
                 <div class="text-sm text-gray-500">{track[2]}</div>
               </li>
             ))}
-          <li>
-            {tracks.length === 0 && <div>No tracks found. Try again.</div>}
-          </li>
+          <li>{tracks.length === 0 && <div>No tracks found. Try again.</div>}</li>
         </ul>
       </output>
     </form>

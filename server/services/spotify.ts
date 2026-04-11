@@ -16,7 +16,10 @@ export interface SpotifyTrackDb {
   album_index?: number;
 }
 
-export type SpotifyTrackApiPlayInfo = Pick<SpotifyTrackDb, "album_uri" | "track_number" | "album_index">;
+export type SpotifyTrackApiPlayInfo = Pick<
+  SpotifyTrackDb,
+  "album_uri" | "track_number" | "album_index"
+>;
 
 export interface SpotifyDevice {
   id: string;
@@ -33,19 +36,14 @@ async function refreshAccessToken(): Promise<string> {
   const spotifyClientSecret = env.SPOTIFY_CLIENT_SECRET!;
   const spotifyRefreshToken = env.SPOTIFY_REFRESH_TOKEN!;
 
-  const jsonResponse = await ofetch(
-    "https://accounts.spotify.com/api/token",
-    {
-      method: "POST",
-      body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
-      headers: {
-        "Authorization": `Basic ${btoa(
-          spotifyClientId + ":" + spotifyClientSecret,
-        )}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+  const jsonResponse = await ofetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    body: `grant_type=refresh_token&refresh_token=${spotifyRefreshToken}`,
+    headers: {
+      Authorization: `Basic ${btoa(spotifyClientId + ":" + spotifyClientSecret)}`,
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-  );
+  });
 
   return jsonResponse.access_token;
 }
@@ -63,7 +61,7 @@ async function recentlyPlayed() {
     "https://api.spotify.com/v1/me/player/recently-played?limit=50",
     {
       headers: authHeader,
-    },
+    }
   );
   return jsonResponse.items;
 }
@@ -83,7 +81,11 @@ export async function lastSpotifyTrackDb(): Promise<any> {
   return null;
 }
 
-export async function playTrack(albumUri: string, trackOffset: number, deviceId: string | null = null) {
+export async function playTrack(
+  albumUri: string,
+  trackOffset: number,
+  deviceId: string | null = null
+) {
   if (!deviceId) {
     deviceId = env.SPOTIFY_DEVICE_ID!;
   }
@@ -104,7 +106,7 @@ export async function playTrack(albumUri: string, trackOffset: number, deviceId:
           position: trackOffset,
         },
       }),
-    },
+    }
   );
 }
 
@@ -116,7 +118,10 @@ export async function getDevices() {
 }
 
 // 🔍 Fetch full album tracklist and compute index of trackId
-export async function getAlbumTrackIndex(albumUri: string, trackId: string): Promise<number | null> {
+export async function getAlbumTrackIndex(
+  albumUri: string,
+  trackId: string
+): Promise<number | null> {
   const albumId = albumUri.split(":").pop();
   if (!albumId) return null;
 
@@ -144,7 +149,7 @@ export async function getAlbumTrackIndex(albumUri: string, trackId: string): Pro
   allTracks.sort((a, b) =>
     a.disc_number === b.disc_number
       ? a.track_number - b.track_number
-      : a.disc_number - b.disc_number,
+      : a.disc_number - b.disc_number
   );
 
   const index = allTracks.findIndex((t) => t.id === trackId);
@@ -186,7 +191,7 @@ export async function updateSpotifyHistory(forceUpdate = false) {
     };
     console.log("track info", trackInfo);
 
-    if (dbTrackId && apiTrackId !== dbTrackId || forceUpdate) {
+    if ((dbTrackId && apiTrackId !== dbTrackId) || forceUpdate) {
       console.log("tracks different -> updating db");
       const sql = postgres(databaseUrl);
 

@@ -3,5 +3,7 @@ python = "3.13.7"
 nodejs = "22.20.0"
 
 [env]
-_.python.venv = { path = ".venv/python-3.13.7", create = true, uv_create_args = ['--seed'] }
+_.python.venv = { path = ".venv/python-3.13.7", create = true, uv_create_args = [
+  '--seed',
+] }
 _.file = "./secrets/daniel.env"

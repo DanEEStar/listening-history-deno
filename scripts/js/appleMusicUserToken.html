@@ -2,23 +2,25 @@
 <meta charset="utf-8" />
 <title>Apple Music — Get Music User Token</title>
 <style>
-body {
-  font: 16px system-ui, sans-serif;
-  margin: 2rem;
-}
+  body {
+    font:
+      16px system-ui,
+      sans-serif;
+    margin: 2rem;
+  }
 
-button {
-  font: inherit;
-  padding: .6rem 1rem;
-}
+  button {
+    font: inherit;
+    padding: 0.6rem 1rem;
+  }
 
-pre {
-  white-space: pre-wrap;
-  word-break: break-all;
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: .5rem;
-}
+  pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
 </style>
 
 <h1>Get Apple Music User Token</h1>
@@ -30,7 +32,7 @@ pre {
 <button id="go">Authorize & show token</button>
 
 <h2>Developer Token</h2>
-<pre id="dev-token"><APPLE_MUSIC_DEV_TOKEN></pre>
+<pre id="dev-token">&lt;APPLE_MUSIC_DEV_TOKEN&gt;</pre>
 
 <h2>Music User Token</h2>
 <pre id="out">(token will appear after authorization)</pre>
@@ -40,24 +42,23 @@ pre {
 
 <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"></script>
 <script>
-const DEV_TOKEN = "<APPLE_MUSIC_DEV_TOKEN>";
+  const DEV_TOKEN = "<APPLE_MUSIC_DEV_TOKEN>";
 
-const out = document.getElementById("out");
-const exportEl = document.getElementById("export");
+  const out = document.getElementById("out");
+  const exportEl = document.getElementById("export");
 
-document.getElementById("go").onclick = async () => {
-  try {
-    await MusicKit.configure({
-      developerToken: DEV_TOKEN,
-      app: { name: "TokenGrab", build: "1.0" },
-    });
-    const userToken = await MusicKit.getInstance().authorize();
-    out.textContent = userToken;
-    exportEl.textContent =
-      `export APPLE_MUSIC_DEV_TOKEN='${DEV_TOKEN}'\nexport APPLE_MUSIC_USER_TOKEN_DANIEL='${userToken}'`;
-  } catch(e) {
-    out.textContent = "Error: " + (e && e.message || e);
-    console.error(e);
-  }
-};
+  document.getElementById("go").onclick = async () => {
+    try {
+      await MusicKit.configure({
+        developerToken: DEV_TOKEN,
+        app: { name: "TokenGrab", build: "1.0" },
+      });
+      const userToken = await MusicKit.getInstance().authorize();
+      out.textContent = userToken;
+      exportEl.textContent = `export APPLE_MUSIC_DEV_TOKEN='${DEV_TOKEN}'\nexport APPLE_MUSIC_USER_TOKEN_DANIEL='${userToken}'`;
+    } catch (e) {
+      out.textContent = "Error: " + ((e && e.message) || e);
+      console.error(e);
+    }
+  };
 </script>

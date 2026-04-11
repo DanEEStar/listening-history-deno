@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const supabase = useSupabaseClient();
 const email = ref("");
 
@@ -33,7 +32,6 @@ async function signInWithGithub() {
   });
   if (error) console.log(error);
 }
-
 </script>
 
 <template>

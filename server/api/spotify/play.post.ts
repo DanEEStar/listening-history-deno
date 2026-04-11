@@ -1,6 +1,5 @@
 import { playTrack } from "~/server/services/spotify.ts";
 
-
 export default defineEventHandler(async (event) => {
   console.log("spotify play (first line)");
   const body = await readBody(event);
