@@ -6,32 +6,32 @@ import requests
 from colorama import Fore, Style
 from dateutil.parser import isoparse
 
-main_url = 'https://listening-history-deno.deno.dev'
+main_url = "https://listening-history-deno.deno.dev"
 
 
 def main():
     result = 0
 
-    response = requests.get(f'{main_url}/api/spotify/update')
+    response = requests.get(f"{main_url}/api/applemusic/update")
     if response.status_code != 200:
-        print(Fore.RED + f'update Spotify history failed')
+        print(Fore.RED + f"update Apple Music history failed")
         result += 1
-    elif not response.json()['trackInfo']['apiTrackId']:
-        print(Fore.RED + f'could not load Spotify track id')
+    elif not response.json()["trackInfo"]["apiTrackId"]:
+        print(Fore.RED + f"could not load Apple Music track id")
         result += 1
     else:
-        print(Fore.GREEN + f'update Spotify history ok')
+        print(Fore.GREEN + f"update Apple Music history ok")
     print(Style.RESET_ALL)
 
-    response = requests.get(f'{main_url}/api/pocketcasts/update')
+    response = requests.get(f"{main_url}/api/pocketcasts/update")
     if response.status_code != 200:
-        print(Fore.RED + f'update PocketCasts history failed')
+        print(Fore.RED + f"update PocketCasts history failed")
         result += 1
-    elif not response.json()['newestEpisode']['uuid']:
-        print(Fore.RED + f'could not get PocketCasts episode uuid')
+    elif not response.json()["newestEpisode"]["uuid"]:
+        print(Fore.RED + f"could not get PocketCasts episode uuid")
         result += 1
     else:
-        print(Fore.GREEN + f'update PocketCasts history ok')
+        print(Fore.GREEN + f"update PocketCasts history ok")
     print(Style.RESET_ALL)
 
     result += check_status()
@@ -39,53 +39,53 @@ def main():
     if result > 0:
         sys.exit(result)
 
-    print(Fore.GREEN + 'all ok')
+    print(Fore.GREEN + "all ok")
 
 
 def check_status():
     result = 0
 
-    response = requests.get(f'{main_url}/api/status')
+    response = requests.get(f"{main_url}/api/status")
     status_json = json.loads(response.text)
     print(json.dumps(status_json, indent=2))
 
     utc_now = datetime.now(timezone.utc)
 
     jobs = [
-        ('update-spotify-history', 60 * 15),
-        ('update-pocket-casts-history', 60 * 15),
-        ('purge-old-logs', 60 * 60 * 25),
+        ("update-apple-music-history", 60 * 15),
+        ("update-pocket-casts-history", 60 * 15),
+        ("purge-old-logs", 60 * 60 * 25),
     ]
 
     for job in jobs:
-        end_time = isoparse(status_json['jobStatus'][job[0]]['end_time'])
+        end_time = isoparse(status_json["jobStatus"][job[0]]["end_time"])
         diff_seconds = (utc_now - end_time).total_seconds()
         if diff_seconds > job[1]:
-            print(Fore.RED + f'{job[0]} failed, last run {end_time}')
+            print(Fore.RED + f"{job[0]} failed, last run {end_time}")
             result += 1
         else:
-            print(Fore.GREEN + f'{job[0]} ok, last run {end_time}')
+            print(Fore.GREEN + f"{job[0]} ok, last run {end_time}")
     print(Style.RESET_ALL)
 
-    if status_json['numJobEntries'] <= 0 or status_json['numJobEntries'] > 30000:
-        print(Fore.RED + f'numJobEntries not ok {status_json["numJobEntries"]}')
+    if status_json["numJobEntries"] <= 0 or status_json["numJobEntries"] > 30000:
+        print(Fore.RED + f"numJobEntries not ok {status_json['numJobEntries']}")
         result += 1
     else:
-        print(Fore.GREEN + f'numJobEntries ok {status_json["numJobEntries"]}')
+        print(Fore.GREEN + f"numJobEntries ok {status_json['numJobEntries']}")
     print(Style.RESET_ALL)
 
     now = datetime.now(timezone.utc)
-    spotify_played_at = isoparse(status_json['lastSpotifyTrack']['played_at'])
-    print(f'{spotify_played_at=} -> {(now - spotify_played_at).days} days ago')
-    pocketcasts_played_at = isoparse(status_json['lastPocketCastsEpisode']['played_at'])
-    print(f'{pocketcasts_played_at=} -> {(now - pocketcasts_played_at).days} days ago')
+    apple_music_played_at = isoparse(status_json["lastAppleMusicTrack"]["played_at"])
+    print(f"{apple_music_played_at=} -> {(now - apple_music_played_at).days} days ago")
+    pocketcasts_played_at = isoparse(status_json["lastPocketCastsEpisode"]["played_at"])
+    print(f"{pocketcasts_played_at=} -> {(now - pocketcasts_played_at).days} days ago")
 
-    if (now - spotify_played_at).days > 7:
-        print(Fore.RED + f'last Spotify track played more than 7 days ago')
+    if (now - apple_music_played_at).days > 7:
+        print(Fore.RED + f"last Apple Music track played more than 7 days ago")
         result += 1
 
     if (now - pocketcasts_played_at).days > 7:
-        print(Fore.RED + f'last PocketCasts episode played more than 7 days ago')
+        print(Fore.RED + f"last PocketCasts episode played more than 7 days ago")
         result += 1
 
     print(Style.RESET_ALL)
@@ -93,5 +93,5 @@ def check_status():
     return result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
