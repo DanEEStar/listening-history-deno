@@ -42,6 +42,16 @@ select
     $$
   );
 
+select
+  cron.schedule(
+    'update-apple-music-history',
+    '* * * * *',
+    $$
+    select status
+    from http_get_or_fail('https://listening-history-deno.deno.dev/api/applemusic/update')
+    $$
+  );
+
 -- purging old log entries
 SELECT cron.schedule(
   'purge-old-logs',

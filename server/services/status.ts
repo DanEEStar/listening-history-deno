@@ -2,6 +2,7 @@ import postgres from "postgres";
 import { env } from "node:process";
 import { lastSpotifyTrackDb } from "./spotify.ts";
 import { lastPocketCastsEpisodeDb } from "./pocketCasts.ts";
+import { lastAppleMusicTrackDb } from "./appleMusic.ts";
 
 const databaseUrl = env.SUPABASE_DATABASE_URL!;
 
@@ -43,12 +44,14 @@ export async function createStatusResult() {
   const numJobEntries = await getNumJobEntries();
   const lastSpotifyTrack = await lastSpotifyTrackDb();
   const lastPocketCastsEpisode = await lastPocketCastsEpisodeDb();
+  const lastAppleMusicTrack = await lastAppleMusicTrackDb();
 
   return {
     jobStatus,
     numJobEntries,
     lastSpotifyTrack,
     lastPocketCastsEpisode,
+    lastAppleMusicTrack,
   };
 }
 
