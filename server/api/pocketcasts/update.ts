@@ -1,5 +1,3 @@
-import { updatePocketCastsHistory } from "~/server/services/pocketCasts.ts";
-
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const size = parseInt((query.size as string) ?? "10", 10);

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type {
-  SpotifyTrackDb,
-  SpotifyTrackApiPlayInfo,
-} from "~/server/services/spotify";
+import type { SpotifyTrackDb, SpotifyTrackApiPlayInfo } from "#shared/types/spotify";
 
 interface Props {
   track: SpotifyTrackDb;
@@ -83,15 +80,13 @@ function formatDate(dateString: string) {
         </div>
 
         <div class="pt-1">
-          <UButton
+          <button
             @click="handlePlay"
-            size="sm"
-            variant="outline"
-            class="min-h-[36px] px-4"
+            class="inline-flex min-h-[36px] items-center rounded-md border border-gray-300 px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <Icon name="heroicons:play-solid" class="mr-2 h-4 w-4" />
             Play
-          </UButton>
+          </button>
         </div>
       </div>
     </div>
