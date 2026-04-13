@@ -1,3 +1,12 @@
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#   "colorama==0.4.6",
+#   "python-dateutil==2.9.0.post0",
+#   "requests==2.33.1",
+# ]
+# ///
+
 import json
 import sys
 from datetime import datetime, timezone

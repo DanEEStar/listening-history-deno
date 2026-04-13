@@ -1,6 +1,12 @@
 {
   "permissions": {
-    "allow": ["WebFetch(domain:ui.nuxt.com)"],
+    "allow": [
+      "WebFetch(domain:ui.nuxt.com)",
+      "Bash(grep -E \"\\\\.\\(ts|js|vue|json\\)$\")",
+      "Bash(grep:*)",
+      "WebFetch(domain:nuxt.com)",
+      "WebSearch"
+    ],
     "deny": []
   }
 }

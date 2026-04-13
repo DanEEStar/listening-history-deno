@@ -1,19 +1,8 @@
-image: python:3.13
-
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-cache:
-  paths:
-    - .cache/pip
-    - venv/
+image: python:3.14
 
 before_script:
-  - python --version # For debugging
-  - python -m venv venv
-  - source venv/bin/activate
+  - pip install uv
 
 test:
   script:
-    - pip install -r scripts/python/requirements.txt
-    - python scripts/python/check_listening_history_status.py
+    - uv run scripts/python/check_listening_history_status.py
