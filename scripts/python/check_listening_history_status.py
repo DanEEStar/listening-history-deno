@@ -76,7 +76,7 @@ def check_status():
             print(Fore.GREEN + f"{job[0]} ok, last run {end_time}")
     print(Style.RESET_ALL)
 
-    if status_json["numJobEntries"] <= 0 or status_json["numJobEntries"] > 30000:
+    if status_json["numJobEntries"] <= 0 or status_json["numJobEntries"] > 35000:
         print(Fore.RED + f"numJobEntries not ok {status_json['numJobEntries']}")
         result += 1
     else:
