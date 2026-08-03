@@ -15,22 +15,21 @@
     "fmt:check": "oxfmt --check"
   },
   "dependencies": {
-    "@nuxt/icon": "^1.0.0",
-    "@nuxtjs/supabase": "^1.4.2",
-    "jose": "^6.1.0",
-    "nuxt": "^4.4.0",
-    "postgres": "^3.4.5",
-    "type-fest": "^4.26.1",
-    "vue": "^3.5.12",
-    "vue-router": "^5.0.0"
+    "@nuxt/icon": "^2.4.1",
+    "@nuxtjs/supabase": "^2.0.9",
+    "jose": "^6.2.4",
+    "nuxt": "^4.5.1",
+    "postgres": "^3.4.9",
+    "type-fest": "^5.8.0",
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "@tailwindcss/vite": "^4.0.0",
-    "@vueuse/core": "^13.3.0",
-    "@vueuse/nuxt": "^13.3.0",
-    "oxfmt": "^0.44.0",
-    "prettier": "^3.3.3",
-    "tailwindcss": "^4.0.0"
+    "@nuxt/devtools": "^3.4.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vueuse/core": "^14.4.0",
+    "@vueuse/nuxt": "^14.4.0",
+    "oxfmt": "^0.61.0",
+    "tailwindcss": "^4.3.3"
   }
 }

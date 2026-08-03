@@ -23,7 +23,7 @@ const {
   audiobooks,
   audiobooksError,
   search,
-} = await useListeningHistory();
+} = useListeningHistory();
 
 async function playTrack(track: SpotifyTrackApiPlayInfo) {
   let track_number = track.track_number;

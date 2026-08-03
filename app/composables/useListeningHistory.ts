@@ -1,6 +1,6 @@
 import type { SpotifyTrackDb } from "#shared/types/spotify";
 
-export async function useListeningHistory() {
+export function useListeningHistory() {
   const supabase = useSupabaseClient();
   const searchQuery = ref("");
 
@@ -8,7 +8,7 @@ export async function useListeningHistory() {
     data: lastTracks,
     error: lastTracksError,
     refresh: refreshLastTracks,
-  } = await useAsyncData<SpotifyTrackDb[]>("lastTracks", async () => {
+  } = useAsyncData<SpotifyTrackDb[]>("lastTracks", async () => {
     const query = supabase
       .from("spotify_tracks")
       .select(
@@ -32,7 +32,7 @@ export async function useListeningHistory() {
     data: audiobooks,
     error: audiobooksError,
     refresh: refreshAudiobooks,
-  } = await useAsyncData<SpotifyTrackDb[]>("audiobooks", async () => {
+  } = useAsyncData<SpotifyTrackDb[]>("audiobooks", async () => {
     const query = supabase
       .rpc("get_album_tracks")
       .select("*")
