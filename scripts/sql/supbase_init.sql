@@ -26,7 +26,7 @@ select
     '* * * * *',
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.deno.dev/api/spotify/update')
+    from http_get_or_fail('https://listening-history-deno.daneestar.deno.net/api/spotify/update')
     $$
   );
 
@@ -38,7 +38,7 @@ select
     '*/5 * * * *', -- every 5 minutes
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.deno.dev/api/pocketcasts/update')
+    from http_get_or_fail('https://listening-history-deno.daneestar.deno.net/api/pocketcasts/update')
     $$
   );
 
@@ -48,7 +48,7 @@ select
     '* * * * *',
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.deno.dev/api/applemusic/update')
+    from http_get_or_fail('https://listening-history-deno.daneestar.deno.net/api/applemusic/update')
     $$
   );
 

@@ -15,7 +15,7 @@ import requests
 from colorama import Fore, Style
 from dateutil.parser import isoparse
 
-main_url = "https://listening-history-deno.deno.dev"
+main_url = "https://listening-history-deno.daneestar.deno.net"
 
 
 def main():
