@@ -1,8 +1,8 @@
-image: python:3.14
+image: ghcr.io/astral-sh/uv:python3.14-trixie-slim
 
-before_script:
-  - pip install uv
+variables:
+  UV_LINK_MODE: copy
 
 test:
   script:
-    - uv run scripts/python/check_listening_history_status.py
+    - uv run --locked scripts/python/check_listening_history_status.py

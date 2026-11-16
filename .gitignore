@@ -13,6 +13,11 @@ dist
 # Node dependencies
 node_modules
 
+# Python environment and bytecode
+.venv/
+__pycache__/
+*.py[cod]
+
 # Logs
 logs
 *.log

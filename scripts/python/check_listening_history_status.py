@@ -1,12 +1,3 @@
-# /// script
-# requires-python = ">=3.10"
-# dependencies = [
-#   "colorama==0.4.6",
-#   "python-dateutil==2.9.0.post0",
-#   "requests==2.33.1",
-# ]
-# ///
-
 import json
 import sys
 from datetime import datetime, timezone
@@ -15,7 +6,7 @@ import requests
 from colorama import Fore, Style
 from dateutil.parser import isoparse
 
-main_url = "https://listening-history-deno.daneestar.deno.net"
+main_url = "https://listening-history.control.iterativ.ch"
 
 
 def main():

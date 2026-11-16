@@ -1,0 +1,28 @@
+# Allow only build inputs into the context, including for remote Buildx builders.
+# In particular, never send secrets/, .env*, Git history, editor backups, or local output.
+**
+!package.json
+!package-lock.json
+!nuxt.config.ts
+!tsconfig.json
+!database.types.ts
+!database.generated.types.ts
+!app/
+!app/**
+!server/
+!server/**
+!shared/
+!shared/**
+!public/
+!public/**
+
+# Exclude local artifacts even if they occur inside an allowed source directory.
+**/node_modules
+**/.env*
+**/secrets
+**/*.pem
+**/*.key
+**/*.log
+**/*.swp
+**/*~
+**/.DS_Store

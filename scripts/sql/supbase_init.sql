@@ -26,7 +26,7 @@ select
     '* * * * *',
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.daneestar.deno.net/api/spotify/update')
+    from http_get_or_fail('https://listening-history.control.iterativ.ch/api/spotify/update')
     $$
   );
 
@@ -38,7 +38,7 @@ select
     '*/5 * * * *', -- every 5 minutes
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.daneestar.deno.net/api/pocketcasts/update')
+    from http_get_or_fail('https://listening-history.control.iterativ.ch/api/pocketcasts/update')
     $$
   );
 
@@ -48,7 +48,7 @@ select
     '* * * * *',
     $$
     select status
-    from http_get_or_fail('https://listening-history-deno.daneestar.deno.net/api/applemusic/update')
+    from http_get_or_fail('https://listening-history.control.iterativ.ch/api/applemusic/update')
     $$
   );
 
@@ -67,7 +67,9 @@ SELECT cron.schedule(
 select * from cron.job;
 
 -- see cron jobs details
-select end_time, status, * from cron.job_run_details order by end_time desc limit 100;
+select start_time, end_time, status, * from cron.job_run_details order by end_time desc limit 100;
+
+select end_time, status, * from cron.job_run_details where jobid = 35
 
 select count(*) from cron.job_run_details;
 
